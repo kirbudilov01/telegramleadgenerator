@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+venv/
+.venv/
+*.egg-info/
+
+# Environment / secrets
+.env
+*.session
+*.session-journal
+
+# Exports / output
+exports/*.csv
+exports/*.json
+exports/*.xlsx
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+nohup.out
