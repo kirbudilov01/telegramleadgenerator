@@ -27,12 +27,20 @@ class MessageLoader:
         self.rate_limiter = RateLimiter(max_requests=100, window_seconds=1)
         self.db = SessionLocal()
     
-    async def load_all_dialogs(self, limit_dialogs: int = None, include_groups: bool = False) -> int:
+    async def load_all_dialogs(
+        self,
+        limit_dialogs: int = None,
+        include_groups: bool = False,
+        include_bots: bool = False,
+        include_channels: bool = False,
+    ) -> int:
         """
         Enumerate all dialogs and load their message history.
         Args:
             limit_dialogs: Limit number of dialogs to process (for testing)
-            include_groups: Also load group chats (not channels)
+            include_groups: Also load group chats
+            include_bots: Also load bot dialogs
+            include_channels: Also load channel dialogs
         Returns: Total number of messages loaded
         """
         try:
@@ -42,7 +50,11 @@ class MessageLoader:
             
             logger.info(f"Starting message export for account: {me.username or me.first_name}")
             if include_groups:
-                logger.info("Groups mode: personal chats + groups (channels excluded)")
+                logger.info("Groups mode enabled")
+            if include_bots:
+                logger.info("Bots mode enabled")
+            if include_channels:
+                logger.info("Channels mode enabled")
             if limit_dialogs:
                 logger.info(f"(Test mode: limiting to {limit_dialogs} dialogs)")
             
@@ -51,7 +63,7 @@ class MessageLoader:
             skipped_count = 0
 
             def _progress(extra=""):
-                bar = f"  📥 Чатов: {dialog_count:>4} | Сообщений: {total_messages:>7,} | Пропущено: {skipped_count:>4}"
+                bar = f"  📥 Chats: {dialog_count:>4} | Messages: {total_messages:>7,} | Skipped: {skipped_count:>4}"
                 if extra:
                     bar += f"  ← {extra}"
                 print(bar, flush=True)
@@ -62,14 +74,16 @@ class MessageLoader:
                 if limit_dialogs and dialog_count >= limit_dialogs:
                     break
 
-                # Skip bot dialogs
-                if getattr(dialog.entity, 'bot', False):
+                # Skip bot dialogs unless explicitly requested
+                if getattr(dialog.entity, 'bot', False) and not include_bots:
                     logger.debug(f"Skipping bot dialog: {dialog.name}")
                     skipped_count += 1
                     continue
 
-                # Always skip channels (broadcast)
-                if dialog.is_channel:
+                # Skip broadcast channels unless explicitly requested.
+                # Some group-like dialogs are channel-based in Telegram,
+                # so we treat pure channels separately from groups.
+                if dialog.is_channel and not dialog.is_group and not include_channels:
                     logger.debug(f"Skipping channel: {dialog.name}")
                     skipped_count += 1
                     continue

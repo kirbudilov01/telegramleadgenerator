@@ -10,6 +10,7 @@
 [![macOS](https://img.shields.io/badge/macOS-12+-000000?style=for-the-badge&logo=apple&logoColor=white)](https://apple.com)
 [![License](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)](LICENSE)
 [![FABRICBOT](https://img.shields.io/badge/FABRICBOT-ECOSYSTEM-FF6B35?style=for-the-badge)](https://github.com/kirbudilov01)
+[![One-Click Start](https://img.shields.io/badge/One--Click-START.command-2ea44f?style=for-the-badge)](#-one-click-start-for-beginners)
 
 <br/>
 
@@ -33,7 +34,7 @@
 | 🤖 | Automatically filters out **bots, channels, and spam** |
 | 🔍 | Scans for **keywords**: AI, marketing, development, YouTube, pricing, etc. |
 | 📊 | Assigns **priority scores 1–5** based on activity and conversation topics |
-| 🖥️ | Saves **3 ready-to-use CSV files** to your Desktop |
+| 🖥️ | Saves **analysis CSVs + full raw history CSV** to your Desktop |
 
 ---
 
@@ -53,6 +54,23 @@ bash run.sh
 ```
 
 That's it. CSV reports will appear on your Desktop automatically.
+
+---
+
+## 🟢 One-Click Start (for beginners)
+
+After cloning the repository, you can run everything with one launcher:
+
+```bash
+chmod +x start.command && ./start.command
+```
+
+What this launcher does:
+- Runs setup automatically if this is your first run
+- Opens an interactive menu with simple button-like choices
+- Starts collection + analysis
+- Saves result files to Desktop, including full raw history CSV
+- Optionally opens local AI chat (Ollama)
 
 ---
 
@@ -113,13 +131,18 @@ bash run.sh
 The terminal will ask two questions:
 
 ```
-What to collect?
-  1) Personal chats only      (faster, recommended)
-  2) Personal chats + groups  (slower, more data)
+Choose collection profile:
+     1) Smart Filter (recommended)  personal only, no bots/channels
+     2) Custom selection            choose groups/bots/channels yourself
 
 Run mode?
   1) Full collection          (first time)
   2) New messages only        (already collected)
+
+Custom mode then asks:
+     - Include group chats? [y/N]
+     - Include bot dialogs? [y/N]
+     - Include channels? [y/N]
 ```
 
 After completion, a folder `telegram_analysis_DATE/` appears on your Desktop.
@@ -133,6 +156,28 @@ After completion, a folder `telegram_analysis_DATE/` appears on your Desktop.
 | `top100_priority.csv` | ⭐ Top 100 by importance — **start here** |
 | `top100_by_activity.csv` | Top 100 by message count |
 | `all_chats.csv` | All analyzed chats |
+| `full_history_raw.csv` | Full raw CSV of the entire collected history |
+
+---
+
+## 🤖 Optional Local AI Chat
+
+After each run, you can open a local AI chat over your generated CSV results.
+
+The script asks:
+
+```
+Launch local AI chat now? [y/N]
+```
+
+Requirements:
+- Install Ollama: https://ollama.com
+- Pull model once: `ollama pull llama3.1`
+
+Then you can type prompts like:
+- "Show the top 10 warm leads in fintech"
+- "Which contacts discussed AI automation budgets?"
+- "Who should I follow up with this week and why?"
 
 ---
 

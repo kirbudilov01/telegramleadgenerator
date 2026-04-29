@@ -44,7 +44,12 @@ async def init_database():
     logger.info("✓ Database schema created/verified")
 
 
-async def load_command(limit_dialogs: int = None, include_groups: bool = False):
+async def load_command(
+    limit_dialogs: int = None,
+    include_groups: bool = False,
+    include_bots: bool = False,
+    include_channels: bool = False,
+):
     """Load all messages from Telegram dialogs"""
     if limit_dialogs:
         logger.info(f"TEST MODE: Loading max {limit_dialogs} dialogs")
@@ -60,6 +65,8 @@ async def load_command(limit_dialogs: int = None, include_groups: bool = False):
         total_messages = await loader.load_all_dialogs(
             limit_dialogs=limit_dialogs,
             include_groups=include_groups,
+            include_bots=include_bots,
+            include_channels=include_channels,
         )
         
         logger.info(f"✓ Export complete: {total_messages} messages loaded")
@@ -149,7 +156,8 @@ def main():
 Telegram Export & Sync Tool
 
 Usage:
-  python main.py load [limit]        - Load messages (optionally limit dialogs for testing)
+    python main.py load [limit] [--groups] [--bots] [--channels]
+                                                                        - Load messages with optional include flags
   python main.py sync                - Start real-time synchronization
   python main.py export json|csv     - Export messages to JSON or CSV
   python main.py stats               - Show export statistics
@@ -158,6 +166,8 @@ Usage:
 
 Examples:
   python main.py load                # Load all dialogs
+    python main.py load --groups       # Include group chats
+    python main.py load --groups --bots --channels  # Include everything
   python main.py load 10             # Load only 10 dialogs (for testing)
   python main.py download-voice mikekosarev  # Download voices from @mikekosarev
         """)
@@ -168,6 +178,8 @@ Examples:
     if command == "load":
         limit_dialogs = None
         include_groups = "--groups" in sys.argv
+        include_bots = "--bots" in sys.argv
+        include_channels = "--channels" in sys.argv
         args = [a for a in sys.argv[2:] if not a.startswith("--")]
         if args:
             try:
@@ -175,7 +187,14 @@ Examples:
             except ValueError:
                 logger.error(f"Invalid limit: {args[0]}")
                 sys.exit(1)
-        asyncio.run(load_command(limit_dialogs=limit_dialogs, include_groups=include_groups))
+        asyncio.run(
+            load_command(
+                limit_dialogs=limit_dialogs,
+                include_groups=include_groups,
+                include_bots=include_bots,
+                include_channels=include_channels,
+            )
+        )
     elif command == "sync":
         asyncio.run(sync_command())
     elif command == "export":

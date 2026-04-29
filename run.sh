@@ -24,21 +24,36 @@ echo -e "${YELLOW}║                                                          �
 echo -e "${YELLOW}╚══════════════════════════════════════════════════════════╝${NC}"
 echo ""
 
-# ─── What to collect ─────────────────────────────────────────────────────────
-echo -e "  ${BOLD}What to collect?${NC}"
+# ─── Collection profile ──────────────────────────────────────────────────────
+echo -e "  ${BOLD}Choose collection profile:${NC}"
 echo ""
-echo "  1)  Personal chats only              (faster, recommended for first run)"
-echo "  2)  Personal chats + group chats     (slower, more data)"
+echo "  1)  Smart Filter (recommended)       personal only, no bots/channels"
+echo "  2)  Custom selection                 choose what to include"
 echo ""
-read -p "  Choice [1 or 2, default 1]: " MODE_CHOICE
-MODE_CHOICE="${MODE_CHOICE:-1}"
+read -p "  Choice [1 or 2, default 1]: " PROFILE_CHOICE
+PROFILE_CHOICE="${PROFILE_CHOICE:-1}"
 
-if [[ "$MODE_CHOICE" == "2" ]]; then
-    LOAD_FLAGS="--groups"
-    MODE_LABEL="personal chats + groups"
-else
-    LOAD_FLAGS=""
-    MODE_LABEL="personal chats only"
+LOAD_FLAGS=""
+MODE_LABEL="Smart Filter"
+
+if [[ "$PROFILE_CHOICE" == "2" ]]; then
+    MODE_LABEL="Custom"
+    echo ""
+    echo -e "  ${BOLD}Custom selection:${NC}"
+    echo ""
+    read -p "  Include group chats? [y/N]: " INCLUDE_GROUPS
+    read -p "  Include bot dialogs? [y/N]: " INCLUDE_BOTS
+    read -p "  Include channels? [y/N]: " INCLUDE_CHANNELS
+
+    if [[ "$INCLUDE_GROUPS" =~ ^[Yy]$ ]]; then
+        LOAD_FLAGS+=" --groups"
+    fi
+    if [[ "$INCLUDE_BOTS" =~ ^[Yy]$ ]]; then
+        LOAD_FLAGS+=" --bots"
+    fi
+    if [[ "$INCLUDE_CHANNELS" =~ ^[Yy]$ ]]; then
+        LOAD_FLAGS+=" --channels"
+    fi
 fi
 
 # ─── Full or incremental ─────────────────────────────────────────────────────
@@ -58,13 +73,19 @@ if [[ "$SYNC_CHOICE" == "2" ]]; then
 else
     echo -e "  ${CYAN}Mode:${NC}       full collection from scratch"
 fi
+echo -e "  ${CYAN}Profile:${NC}    $MODE_LABEL"
+if [[ -n "$LOAD_FLAGS" ]]; then
+    echo -e "  ${CYAN}Flags:${NC}      $LOAD_FLAGS"
+else
+    echo -e "  ${CYAN}Flags:${NC}      (none)"
+fi
 echo ""
 read -p "  Press Enter to start..." _
 
 # ─── Step 1: Collect ─────────────────────────────────────────────────────────
 say "Step 1/2 — Collecting messages from Telegram"
 echo ""
-hint "Scope: $MODE_LABEL"
+hint "Profile: $MODE_LABEL"
 hint "Do NOT close this terminal — progress is shown below"
 hint "First run may take several hours depending on your chat history"
 echo ""
@@ -73,7 +94,7 @@ if [[ "$SYNC_CHOICE" == "2" ]]; then
     python -u main.py sync
     LOAD_EXIT=$?
 else
-    python -u main.py load $LOAD_FLAGS
+    python -u main.py load ${LOAD_FLAGS}
     LOAD_EXIT=$?
 fi
 
@@ -106,6 +127,26 @@ fi
 ok "Analysis complete"
 echo ""
 
+# ─── Full raw CSV export ─────────────────────────────────────────────────────
+say "Creating full raw CSV export (entire collected history)..."
+python -u main.py export csv
+EXPORT_EXIT=$?
+
+if [[ $EXPORT_EXIT -ne 0 ]]; then
+    err "Raw CSV export failed (exit code $EXPORT_EXIT)"
+    hint "You still have analysis CSV files. Try again with: python main.py export csv"
+    exit 1
+fi
+
+RAW_CSV=$(ls -t exports/telegram_export_*.csv 2>/dev/null | head -n 1)
+if [[ -z "$RAW_CSV" ]]; then
+    err "Raw CSV file not found after export"
+    exit 1
+fi
+
+ok "Full raw CSV export created"
+echo ""
+
 # ─── Copy to Desktop ─────────────────────────────────────────────────────────
 say "Saving results to Desktop..."
 mkdir -p "$RESULT_DIR"
@@ -120,6 +161,7 @@ done
 cp exports/analysis_all.csv       "$RESULT_DIR/all_chats.csv"
 cp exports/top100_by_messages.csv "$RESULT_DIR/top100_by_activity.csv"
 cp exports/top100_by_priority.csv "$RESULT_DIR/top100_priority.csv"
+cp "$RAW_CSV"                     "$RESULT_DIR/full_history_raw.csv"
 
 open "$RESULT_DIR"
 
@@ -133,6 +175,18 @@ echo -e "${GREEN}║                                                          �
 echo -e "${GREEN}║      all_chats.csv            — all analyzed chats       ║${NC}"
 echo -e "${GREEN}║      top100_priority.csv      — top leads by score ⭐    ║${NC}"
 echo -e "${GREEN}║      top100_by_activity.csv   — top by message count     ║${NC}"
+echo -e "${GREEN}║      full_history_raw.csv     — complete raw export      ║${NC}"
 echo -e "${GREEN}║                                                          ║${NC}"
 echo -e "${GREEN}╚══════════════════════════════════════════════════════════╝${NC}"
 echo ""
+
+echo -e "  ${BOLD}Optional:${NC} open local AI chat over these results"
+echo ""
+read -p "  Launch local AI chat now? [y/N]: " AI_CHOICE
+if [[ "$AI_CHOICE" =~ ^[Yy]$ ]]; then
+    echo ""
+    hint "Requires Ollama running locally"
+    hint "If needed: install from https://ollama.com and run: ollama pull llama3.1"
+    echo ""
+    python local_ai_chat.py --results-dir "$RESULT_DIR" --model llama3.1 || true
+fi
