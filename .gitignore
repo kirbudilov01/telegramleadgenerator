@@ -22,3 +22,10 @@ exports/*.xlsx
 # Logs
 *.log
 nohup.out
+
+# IDE / editor
+.vscode/
+.idea/
+
+# Internal dev files
+.github/copilot-instructions.md

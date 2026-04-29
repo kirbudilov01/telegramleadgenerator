@@ -48,7 +48,14 @@ class MessageLoader:
             
             total_messages = 0
             dialog_count = 0
-            
+            skipped_count = 0
+
+            def _progress(extra=""):
+                bar = f"  📥 Чатов: {dialog_count:>4} | Сообщений: {total_messages:>7,} | Пропущено: {skipped_count:>4}"
+                if extra:
+                    bar += f"  ← {extra}"
+                print(bar, flush=True)
+
             # Iterate through all dialogs
             async for dialog in self.client.iter_dialogs():
                 # Stop if limit reached
@@ -58,21 +65,24 @@ class MessageLoader:
                 # Skip bot dialogs
                 if getattr(dialog.entity, 'bot', False):
                     logger.debug(f"Skipping bot dialog: {dialog.name}")
+                    skipped_count += 1
                     continue
 
                 # Always skip channels (broadcast)
                 if dialog.is_channel:
                     logger.debug(f"Skipping channel: {dialog.name}")
+                    skipped_count += 1
                     continue
 
                 # Skip groups unless include_groups is set
                 if dialog.is_group and not include_groups:
                     logger.debug(f"Skipping group: {dialog.name}")
+                    skipped_count += 1
                     continue
                 
                 dialog_count += 1
-                logger.info(f"Processing dialog [{dialog_count}]: {dialog.name}")
-                
+                _progress(dialog.name[:40] if dialog.name else "")
+
                 # Load messages from this dialog
                 is_group = bool(dialog.is_group)
                 messages_loaded = await self._load_dialog_messages(
@@ -82,12 +92,14 @@ class MessageLoader:
                     is_group=is_group
                 )
                 total_messages += messages_loaded
+                _progress(dialog.name[:40] if dialog.name else "")
                 
                 # Small delay between dialogs to respect rate limits
                 await asyncio.sleep(0.1)
             
+            print("")
             logger.info(
-                f"✓ Export complete: {dialog_count} dialogs, {total_messages} total messages"
+                f"✓ Export complete: {dialog_count} dialogs, {total_messages:,} total messages (skipped: {skipped_count})"
             )
             return total_messages
             
