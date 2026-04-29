@@ -163,6 +163,14 @@ cp exports/top100_by_messages.csv "$RESULT_DIR/top100_by_activity.csv"
 cp exports/top100_by_priority.csv "$RESULT_DIR/top100_priority.csv"
 cp "$RAW_CSV"                     "$RESULT_DIR/full_history_raw.csv"
 
+say "Building Excel workbook with separate lead sheets..."
+python build_leads_workbook.py --results-dir "$RESULT_DIR" --output "$RESULT_DIR/telegram_leads_bundle.xlsx"
+XLSX_EXIT=$?
+if [[ $XLSX_EXIT -ne 0 ]]; then
+    err "Excel workbook build failed (exit code $XLSX_EXIT)"
+    exit 1
+fi
+
 open "$RESULT_DIR"
 
 echo ""
@@ -176,6 +184,7 @@ echo -e "${GREEN}║      all_chats.csv            — all analyzed chats       
 echo -e "${GREEN}║      top100_priority.csv      — top leads by score ⭐    ║${NC}"
 echo -e "${GREEN}║      top100_by_activity.csv   — top by message count     ║${NC}"
 echo -e "${GREEN}║      full_history_raw.csv     — complete raw export      ║${NC}"
+echo -e "${GREEN}║      telegram_leads_bundle.xlsx — all sheets in one file ║${NC}"
 echo -e "${GREEN}║                                                          ║${NC}"
 echo -e "${GREEN}╚══════════════════════════════════════════════════════════╝${NC}"
 echo ""
@@ -198,7 +207,18 @@ if [[ "$AI_CHOICE" =~ ^[Yy]$ ]]; then
 
     if [[ "$AI_PROVIDER_CHOICE" == "2" ]]; then
         AI_PROVIDER="openai"
-        AI_MODEL="gpt-4o-mini"
+        echo ""
+        echo "  Choose OpenAI Cloud model:"
+        echo "  1) GPT-5.3-Codex (advanced reasoning/coding)"
+        echo "  2) GPT-4o-mini (faster/cheaper)"
+        echo ""
+        read -p "  Choice [1/2, default 1]: " OPENAI_MODEL_CHOICE
+        OPENAI_MODEL_CHOICE="${OPENAI_MODEL_CHOICE:-1}"
+        if [[ "$OPENAI_MODEL_CHOICE" == "2" ]]; then
+            AI_MODEL="gpt-4o-mini"
+        else
+            AI_MODEL="gpt-5.3-codex"
+        fi
         hint "Requires OPENAI_API_KEY in your environment or .env"
     elif [[ "$AI_PROVIDER_CHOICE" == "3" ]]; then
         AI_PROVIDER="anthropic"

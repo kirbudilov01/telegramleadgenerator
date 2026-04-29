@@ -22,6 +22,14 @@
 
 > Part of the **[FABRICBOT ECOSYSTEM](https://github.com/kirbudilov01)** — open-source tools for sales automation & lead generation
 
+<br/>
+
+<img src="https://capsule-render.vercel.app/api?type=rect&color=0:ff7a18,100:af002d&height=90&section=header&text=FABRICBOT%20NETWORK&fontSize=28&fontColor=ffffff" width="100%"/>
+
+[![YouTube](https://img.shields.io/badge/YouTube-@fabricbotecosystem-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/@fabricbotecosystem)
+[![X](https://img.shields.io/badge/X-@kirillfbc-111111?style=for-the-badge&logo=x&logoColor=white)](https://x.com/kirillfbc)
+[![Community](https://img.shields.io/badge/Community-Reposearchengine-1D9BF0?style=for-the-badge&logo=githubpages&logoColor=white)](https://kirbudilov01.github.io/reposearchengine/)
+
 </div>
 
 ---
@@ -34,7 +42,7 @@
 | 🤖 | Automatically filters out **bots, channels, and spam** |
 | 🔍 | Scans for **keywords**: AI, marketing, development, YouTube, pricing, etc. |
 | 📊 | Assigns **priority scores 1–5** based on activity and conversation topics |
-| 🖥️ | Saves **analysis CSVs + full raw history CSV** to your Desktop |
+| 🖥️ | Saves **analysis CSVs + full raw history CSV + multi-sheet XLSX** to your Desktop |
 
 ---
 
@@ -157,6 +165,7 @@ After completion, a folder `telegram_analysis_DATE/` appears on your Desktop.
 | `top100_by_activity.csv` | Top 100 by message count |
 | `all_chats.csv` | All analyzed chats |
 | `full_history_raw.csv` | Full raw CSV of the entire collected history |
+| `telegram_leads_bundle.xlsx` | Single Excel file with separate sheets for leads + full history |
 
 ---
 
@@ -173,6 +182,10 @@ Choose AI provider:
      1) Ollama (local)
      2) OpenAI API
      3) Anthropic Claude API
+
+If you pick OpenAI Cloud:
+     1) GPT-5.3-Codex
+     2) GPT-4o-mini
 ```
 
 Requirements:
@@ -183,7 +196,7 @@ Requirements:
 
 Default models:
 - Ollama: `llama3.1`
-- OpenAI: `gpt-4o-mini`
+- OpenAI: `gpt-5.3-codex` (or `gpt-4o-mini`)
 - Anthropic: `claude-3-5-sonnet-latest`
 
 Then you can type prompts like:
@@ -272,14 +285,6 @@ python main.py stats
 ## 🤝 Contributing
 
 Pull requests are welcome. For major changes, open an issue first.
-
----
-
-## 🌐 FABRICBOT Links
-
-- YouTube: https://www.youtube.com/@fabricbotecosystem
-- X (Twitter): https://x.com/kirillfbc
-- Community: https://kirbudilov01.github.io/reposearchengine/
 
 ---
 

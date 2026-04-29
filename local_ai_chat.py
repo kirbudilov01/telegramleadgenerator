@@ -173,8 +173,16 @@ def main() -> int:
         choices=["ollama", "openai", "anthropic", "claude"],
         help="LLM provider",
     )
-    parser.add_argument("--model", default="llama3.1", help="Model name for selected provider")
+    parser.add_argument("--model", default="", help="Model name for selected provider")
     args = parser.parse_args()
+
+    if not args.model:
+        if args.provider == "openai":
+            args.model = os.getenv("OPENAI_MODEL", "gpt-5.3-codex")
+        elif args.provider in {"anthropic", "claude"}:
+            args.model = os.getenv("ANTHROPIC_MODEL", "claude-3-5-sonnet-latest")
+        else:
+            args.model = "llama3.1"
 
     results_dir = Path(args.results_dir).resolve()
     context = build_context(results_dir)
