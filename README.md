@@ -7,6 +7,7 @@
 [![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18-336791?style=for-the-badge&logo=postgresql&logoColor=white)](https://postgresql.org)
 [![Telegram](https://img.shields.io/badge/Telegram-MTProto-2AABEE?style=for-the-badge&logo=telegram&logoColor=white)](https://my.telegram.org)
+[![TON](https://img.shields.io/badge/TON-Project-0098EA?style=for-the-badge&logo=ton&logoColor=white)](https://ton.org)
 [![macOS](https://img.shields.io/badge/macOS-12+-000000?style=for-the-badge&logo=apple&logoColor=white)](https://apple.com)
 [![License](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)](LICENSE)
 [![FABRICBOT](https://img.shields.io/badge/FABRICBOT-ECOSYSTEM-FF6B35?style=for-the-badge)](https://github.com/kirbudilov01)
@@ -37,6 +38,21 @@
 [![Community](https://img.shields.io/badge/Community-Reposearchengine-1D9BF0?style=for-the-badge&logo=githubpages&logoColor=white)](https://kirbudilov01.github.io/reposearchengine/)
 
 </div>
+
+---
+
+## 🚀 Start Here (30 seconds)
+
+If you want the easiest path with the least friction:
+
+```bash
+git clone https://github.com/kirbudilov01/telegramleadgenerator.git && cd telegramleadgenerator && chmod +x start.command && ./start.command
+```
+
+That single command will:
+- Run setup if needed
+- Launch Ultra Noob Mode with recommended settings
+- Collect, analyze, and export files to Desktop
 
 ---
 
@@ -102,6 +118,33 @@
 | Sales follow-ups | Priority-ranked leads with conversation context |
 | Partnerships & BD | Find warm intros and active collaborators |
 | Recruiting & hiring | Spot candidates discussing relevant skills |
+| TON project outreach | Discover hot TON conversations and prioritize follow-ups |
+
+---
+
+## 💎 TON Focus (mandatory track)
+
+This project is part of our TON-oriented growth stack.
+
+What TON teams can do with it:
+- Detect active conversations around TON ecosystem topics
+- Segment priority leads by recency and intent
+- Build fast outreach queues for ecosystem growth and partnerships
+- Keep full raw history for compliance and later deep-dive analysis
+
+---
+
+## 🌍 FABRICBOT Community Model
+
+Our community is built around two tracks:
+
+| Track | Access model | Outcome |
+|---|---|---|
+| Open Repo Scout | Open-source public repos | Fast discovery of useful public workflows and tooling |
+| Workflow Pro (Paid) | Advanced workflow support + closed/private repos | Custom infra, higher signal lead systems, and production-grade integration |
+
+Community hub:
+- https://kirbudilov01.github.io/reposearchengine/
 
 ---
 
@@ -376,6 +419,16 @@ python main.py stats
 
 **Problem:** I only want the easiest mode  
 **Fix:** Use `./start.command` — it launches Ultra Noob Mode with recommended defaults.
+
+---
+
+## 🗺️ Roadmap (Now / Next / Soon)
+
+| Stage | Focus |
+|---|---|
+| Now | One-click onboarding, Smart/Custom collection, CSV + XLSX outputs |
+| Next | Better AI memory over full-history exports, stronger lead scoring presets |
+| Soon | Extended TON templates, team workflows, and deeper closed-repo integration track |
 
 ---
 
