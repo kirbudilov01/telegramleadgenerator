@@ -71,6 +71,40 @@
 
 ---
 
+## 📈 Live Snapshot
+
+<div align="center">
+
+![Chats](https://img.shields.io/badge/Chats-5000%2B-0ea5e9?style=for-the-badge)
+![Messages](https://img.shields.io/badge/Messages-800k%2B-22c55e?style=for-the-badge)
+![Output](https://img.shields.io/badge/Output-CSV%20%2B%20XLSX-f59e0b?style=for-the-badge)
+![Mode](https://img.shields.io/badge/Mode-Ultra%20Noob-14b8a6?style=for-the-badge)
+
+</div>
+
+---
+
+## 🛡️ Why You Can Trust This
+
+| Guarantee | What it means |
+|---|---|
+| Local-first | Your data stays on your machine |
+| No forced cloud upload | AI can run via local Ollama |
+| Secrets protected | `.env` and `*.session` are git-ignored |
+| Clear exports | You always get raw full history + lead-focused outputs |
+
+---
+
+## 🎯 Best Use Cases
+
+| Use case | Outcome |
+|---|---|
+| Sales follow-ups | Priority-ranked leads with conversation context |
+| Partnerships & BD | Find warm intros and active collaborators |
+| Recruiting & hiring | Spot candidates discussing relevant skills |
+
+---
+
 ## ⚡ Quick Start (one command)
 
 > **Prerequisites:** macOS 12+, internet connection, Telegram account
@@ -353,7 +387,7 @@ Pull requests are welcome. For major changes, open an issue first.
 
 <div align="center">
 
-**Built with ❤️ as part of the [FABRICBOT ECOSYSTEM](https://github.com/kirbudilov01)**
+**Built with ❤️ as part of the [FABRICBOT ECOSYSTEM](https://github.com/kirbudilov01) • Follow on [X @kirillfbc](https://x.com/kirillfbc)**
 
 *Open-source tools for sales automation, lead generation & Telegram data analysis*
 
