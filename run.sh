@@ -4,7 +4,7 @@ set -e
 GREEN='\033[0;32m'; YELLOW='\033[1;33m'; RED='\033[0;31m'; CYAN='\033[0;36m'; BOLD='\033[1m'; NC='\033[0m'
 say()  { echo -e "\n${YELLOW}▶${NC} ${BOLD}$1${NC}"; }
 ok()   { echo -e "  ${GREEN}✓${NC} $1"; }
-err()  { echo -e "\n${RED}✗ ОШИБКА:${NC} $1"; }
+err()  { echo -e "\n${RED}✗ ERROR:${NC} $1"; }
 hint() { echo -e "  ${CYAN}ℹ${NC}  $1"; }
 
 DESKTOP="$HOME/Desktop"
@@ -18,54 +18,55 @@ clear
 echo ""
 echo -e "${YELLOW}╔══════════════════════════════════════════════════════════╗${NC}"
 echo -e "${YELLOW}║                                                          ║${NC}"
-echo -e "${YELLOW}║   📊  Telegram Lead Generator                            ║${NC}"
+echo -e "${YELLOW}║   📊  Telegram Lead Generator — Collect & Analyze       ║${NC}"
+echo -e "${YELLOW}║          by FABRICBOT ECOSYSTEM                         ║${NC}"
 echo -e "${YELLOW}║                                                          ║${NC}"
 echo -e "${YELLOW}╚══════════════════════════════════════════════════════════╝${NC}"
 echo ""
 
-# ─── Выбор режима сбора ──────────────────────────────────────────────────────
-echo -e "  ${BOLD}Что собирать?${NC}"
+# ─── What to collect ─────────────────────────────────────────────────────────
+echo -e "  ${BOLD}What to collect?${NC}"
 echo ""
-echo "  1)  Только личные чаты               (быстрее, рекомендуется)"
-echo "  2)  Личные чаты + группы             (медленнее, больше данных)"
+echo "  1)  Personal chats only              (faster, recommended for first run)"
+echo "  2)  Personal chats + group chats     (slower, more data)"
 echo ""
-read -p "  Выбор [1 или 2, по умолчанию 1]: " MODE_CHOICE
+read -p "  Choice [1 or 2, default 1]: " MODE_CHOICE
 MODE_CHOICE="${MODE_CHOICE:-1}"
 
 if [[ "$MODE_CHOICE" == "2" ]]; then
     LOAD_FLAGS="--groups"
-    MODE_LABEL="личные чаты + группы"
+    MODE_LABEL="personal chats + groups"
 else
     LOAD_FLAGS=""
-    MODE_LABEL="только личные чаты"
+    MODE_LABEL="personal chats only"
 fi
 
-# ─── Повторный запуск? ──────────────────────────────────────────────────────
+# ─── Full or incremental ─────────────────────────────────────────────────────
 echo ""
-echo -e "  ${BOLD}Режим запуска:${NC}"
+echo -e "  ${BOLD}Run mode?${NC}"
 echo ""
-echo "  1)  Полный сбор                      (если запускаешь первый раз)"
-echo "  2)  Только новые сообщения           (если сбор уже был)"
+echo "  1)  Full collection                  (first time — collects everything)"
+echo "  2)  New messages only                (already collected — sync updates)"
 echo ""
-read -p "  Выбор [1 или 2, по умолчанию 1]: " SYNC_CHOICE
+read -p "  Choice [1 or 2, default 1]: " SYNC_CHOICE
 SYNC_CHOICE="${SYNC_CHOICE:-1}"
 
 echo ""
-echo -e "  ${CYAN}Режим:${NC} $MODE_LABEL"
+echo -e "  ${CYAN}Collecting:${NC} $MODE_LABEL"
 if [[ "$SYNC_CHOICE" == "2" ]]; then
-    echo -e "  ${CYAN}Сбор:${NC}  только новые сообщения"
+    echo -e "  ${CYAN}Mode:${NC}       new messages only"
 else
-    echo -e "  ${CYAN}Сбор:${NC}  полный (все чаты с нуля)"
+    echo -e "  ${CYAN}Mode:${NC}       full collection from scratch"
 fi
 echo ""
-read -p "  Нажми Enter чтобы начать..." _
+read -p "  Press Enter to start..." _
 
-# ─── Collect messages ───────────────────────────────────────────────────────
-say "Шаг 1/2 — Сбор сообщений из Telegram"
+# ─── Step 1: Collect ─────────────────────────────────────────────────────────
+say "Step 1/2 — Collecting messages from Telegram"
 echo ""
-hint "Режим: $MODE_LABEL"
-hint "Не закрывай терминал — прогресс отображается ниже"
-hint "Первый запуск может занять несколько часов (зависит от количества чатов)"
+hint "Scope: $MODE_LABEL"
+hint "Do NOT close this terminal — progress is shown below"
+hint "First run may take several hours depending on your chat history"
 echo ""
 
 if [[ "$SYNC_CHOICE" == "2" ]]; then
@@ -77,41 +78,41 @@ else
 fi
 
 if [[ $LOAD_EXIT -ne 0 ]]; then
-    err "Сбор завершился с ошибкой (код $LOAD_EXIT)"
+    err "Collection failed (exit code $LOAD_EXIT)"
     echo ""
-    hint "Возможные причины:"
-    hint "  • Telegram замедлил запросы — подожди 10 минут и повтори"
-    hint "  • Неверные данные в .env — проверь API_ID, API_HASH, номер"
-    hint "  • Сессия устарела — запусти: python auth.py"
+    hint "Possible causes:"
+    hint "  • Telegram rate-limited you — wait 10 minutes and try again"
+    hint "  • Wrong credentials in .env — check API_ID, API_HASH, phone"
+    hint "  • Session expired — re-run: python auth.py"
     echo ""
     exit 1
 fi
 
-ok "Сбор завершён"
+ok "Collection complete"
 echo ""
 
-# ─── Analyze ────────────────────────────────────────────────────────────────
-say "Шаг 2/2 — Анализ чатов и формирование отчётов"
+# ─── Step 2: Analyze ─────────────────────────────────────────────────────────
+say "Step 2/2 — Analyzing chats and building reports"
 echo ""
 python analyze.py
 ANALYZE_EXIT=$?
 
 if [[ $ANALYZE_EXIT -ne 0 ]]; then
-    err "Анализ завершился с ошибкой (код $ANALYZE_EXIT)"
-    hint "Проверь статистику базы: python main.py stats"
+    err "Analysis failed (exit code $ANALYZE_EXIT)"
+    hint "Check database stats: python main.py stats"
     exit 1
 fi
 
-ok "Анализ завершён"
+ok "Analysis complete"
 echo ""
 
-# ─── Copy to Desktop ────────────────────────────────────────────────────────
-say "Копируем результаты на Рабочий стол..."
+# ─── Copy to Desktop ─────────────────────────────────────────────────────────
+say "Saving results to Desktop..."
 mkdir -p "$RESULT_DIR"
 
 for f in exports/analysis_all.csv exports/top100_by_messages.csv exports/top100_by_priority.csv; do
     if [[ ! -f "$f" ]]; then
-        err "Файл не найден: $f"
+        err "Output file not found: $f"
         exit 1
     fi
 done
@@ -125,13 +126,13 @@ open "$RESULT_DIR"
 echo ""
 echo -e "${GREEN}╔══════════════════════════════════════════════════════════╗${NC}"
 echo -e "${GREEN}║                                                          ║${NC}"
-echo -e "${GREEN}║   ✅  Готово! Файлы сохранены на Рабочем столе           ║${NC}"
+echo -e "${GREEN}║   ✅  Done! Reports saved to your Desktop                ║${NC}"
 echo -e "${GREEN}║                                                          ║${NC}"
 echo -e "${GREEN}║   📁 telegram_analysis_${TIMESTAMP}  ║${NC}"
 echo -e "${GREEN}║                                                          ║${NC}"
-echo -e "${GREEN}║      all_chats.csv            — все проанализированные   ║${NC}"
-echo -e "${GREEN}║      top100_priority.csv      — топ по важности ⭐       ║${NC}"
-echo -e "${GREEN}║      top100_by_activity.csv   — топ по активности        ║${NC}"
+echo -e "${GREEN}║      all_chats.csv            — all analyzed chats       ║${NC}"
+echo -e "${GREEN}║      top100_priority.csv      — top leads by score ⭐    ║${NC}"
+echo -e "${GREEN}║      top100_by_activity.csv   — top by message count     ║${NC}"
 echo -e "${GREEN}║                                                          ║${NC}"
 echo -e "${GREEN}╚══════════════════════════════════════════════════════════╝${NC}"
 echo ""
