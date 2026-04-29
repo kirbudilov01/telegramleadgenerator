@@ -1,104 +1,168 @@
-# Telegram Chat Analyzer
+<div align="center">
 
-Собирает все личные переписки (и опционально группы) из Telegram в базу данных и формирует приоритизированные CSV-отчёты — чтобы за 5 минут найти горячие контакты среди тысяч чатов.
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:2AABEE,100:1a7bbf&height=180&section=header&text=Telegram%20Lead%20Generator&fontSize=36&fontColor=ffffff&fontAlignY=38&desc=Найди%20горячие%20контакты%20среди%20тысяч%20чатов&descAlignY=60&descSize=16" width="100%"/>
 
-**Что делает:**
-- Парсит всю историю личных чатов (и групп при флаге `--groups`)
-- Удаляет ботов, каналы, спам, рекламные рассылки
-- Ищет ключевые слова (AI, маркетинг, разработка, YouTube и др.)
-- Расставляет приоритеты и кладёт 3 CSV-файла на рабочий стол
+<br/>
+
+[![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18-336791?style=for-the-badge&logo=postgresql&logoColor=white)](https://postgresql.org)
+[![Telegram](https://img.shields.io/badge/Telegram-MTProto-2AABEE?style=for-the-badge&logo=telegram&logoColor=white)](https://my.telegram.org)
+[![macOS](https://img.shields.io/badge/macOS-12+-000000?style=for-the-badge&logo=apple&logoColor=white)](https://apple.com)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+
+<br/>
+
+**Парсит всю историю Telegram → PostgreSQL → CSV с приоритетами на рабочем столе**
+
+[Быстрый старт](#-быстрый-старт) · [Как это работает](#-как-это-работает) · [Структура данных](#-структура-csv)
+
+</div>
 
 ---
 
-## Быстрый старт (macOS)
+## ✨ Что делает
 
-### 1. Установи всё одной командой
+| | |
+|---|---|
+| 📥 | Скачивает **всю историю** личных чатов (5000+ диалогов) |
+| 🤖 | Автоматически удаляет **ботов, каналы, спам** |
+| 🔍 | Ищет **ключевые слова**: AI, маркетинг, разработка, YouTube и др. |
+| 📊 | Расставляет **приоритеты 1–5** по активности и теме диалога |
+| 🖥️ | Кладёт **3 CSV-файла на Рабочий стол** — готовы к работе |
+
+---
+
+## 🚀 Быстрый старт
+
+### Шаг 1 — Клонируй репозиторий
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/telegram-chat-analyzer.git
-cd telegram-chat-analyzer
+git clone https://github.com/kirbudilov/telegramleadgenerator.git
+cd telegramleadgenerator
+```
+
+### Шаг 2 — Запусти установку
+
+```bash
 bash setup.sh
 ```
 
-Скрипт автоматически установит:
-- Homebrew (если нет)
-- Python 3.11
-- PostgreSQL 18
-- Все Python-зависимости
-- Создаст базу данных и авторизует Telegram-сессию
-
-> При запросе введи код подтверждения из Telegram.
-
-### 2. Получи Telegram API ключи
-
-1. Зайди на [https://my.telegram.org](https://my.telegram.org)
-2. Войди в свой аккаунт
-3. Открой **API development tools**
-4. Создай приложение — скопируй `API_ID` и `API_HASH`
-5. Вставь в файл `.env`:
+Скрипт сам спросит всё необходимое прямо в терминале:
 
 ```
-API_ID=1234567
-API_HASH=abcdef1234567890abcdef1234567890
-TELEGRAM_PHONE=+79991234567
-DATABASE_URL=postgresql://localhost:5432/telegram_export
+[1/8] Homebrew          → устанавливает если нет
+[2/8] Python 3.11       → устанавливает если нет
+[3/8] PostgreSQL        → устанавливает и запускает
+[4/8] Зависимости       → pip install -r requirements.txt
+[5/8] База данных       → создаёт telegram_export
+[6/8] API_ID            → подскажет где взять, спросит в терминале
+[7/8] API_HASH + Phone  → то же самое
+[8/8] Telegram auth     → пришлёт код на телефон
 ```
 
-### 3. Запусти сбор и анализ
+> **Где взять API ключи:**
+> 1. Открой [my.telegram.org](https://my.telegram.org) → войди по номеру телефона
+> 2. Нажми **API development tools**
+> 3. Создай приложение (название — любое)
+> 4. Скопируй `App api_id` и `App api_hash` — вставишь в терминал по запросу
+
+### Шаг 3 — Запусти сбор данных
 
 ```bash
 bash run.sh
 ```
 
-После завершения на рабочем столе появится папка `telegram_analysis_ДАТА/` с тремя файлами:
+После завершения на **Рабочем столе** появится папка `telegram_analysis_ДАТА/`:
 
 | Файл | Содержание |
 |------|-----------|
-| `top100_priority.csv` | Топ-100 чатов по важности (с этого начинать) |
-| `top100_by_activity.csv` | Топ-100 по числу сообщений |
-| `all_chats.csv` | Все проанализированные чаты |
+| `top100_priority.csv` | ⭐ Топ-100 по важности — начинай отсюда |
+| `top100_by_messages.csv` | Топ-100 по активности |
+| `analysis_all.csv` | Все проанализированные чаты |
 
 ---
 
-## Включить группы
+## ⚙️ Как это работает
 
-По умолчанию собираются только личные чаты. Чтобы добавить группы:
+```
+Telegram API
+     │
+     ▼
+Telethon (MTProto)
+     │  скачивает историю всех диалогов
+     ▼
+PostgreSQL
+     │  chats + messages
+     ▼
+Анализатор
+     │  фильтрация спама/ботов
+     │  поиск ключевых слов
+     │  scoring приоритетов
+     ▼
+CSV на Рабочем столе
+```
 
+**Алгоритм приоритетов:**
+- `priority = 5` — 200+ сообщений + 3+ ключевых слова → **горячий контакт**
+- `priority = 3` — 50+ сообщений или 3+ ключевых слова → **тёплый**
+- `priority = 1` — всё остальное
+
+---
+
+## 📋 Структура CSV
+
+| Колонка | Описание |
+|---------|---------|
+| `chat_name` | Username или название чата |
+| `chat_type` | `personal` / `group` |
+| `message_count` | Всего сообщений в диалоге |
+| `priority` | 5 = горячий, 3 = средний, 1 = слабый |
+| `intent` | `interest` — обсуждали задачи; `neutral` — просто общение |
+| `matched_keywords` | Найденные ключевые слова |
+| `last_messages` | Последние 5 сообщений (для быстрого контекста) |
+
+---
+
+## 🔧 Дополнительно
+
+**Включить группы** (по умолчанию только личные чаты):
 ```bash
-# В run.sh замени строку:
-python -u main.py load
-# На:
-python -u main.py load --groups
+python main.py load --groups
+```
+
+**Только анализ без повторного сбора:**
+```bash
+python analyze.py
+```
+
+**Статистика базы:**
+```bash
+python main.py stats
 ```
 
 ---
 
-## Структура CSV
+## 📋 Требования
 
-| Колонка | Описание |
-|---------|---------|
-| `chat_name` | username или название |
-| `chat_type` | `personal` / `group` |
-| `message_count` | Всего сообщений |
-| `priority` | 5 = горячий, 3 = средний, 1 = слабый |
-| `intent` | `interest` = обсуждали задачи, `neutral` = общение |
-| `matched_keywords` | Найденные ключевые слова |
-| `last_messages` | Последние 5 сообщений |
+- **macOS 12+** (Apple Silicon и Intel)
+- Telegram аккаунт
+- API ключи с [my.telegram.org](https://my.telegram.org) (бесплатно)
 
 ---
 
-## Требования
+## 🔒 Безопасность
 
-- macOS 12+ (для других ОС нужна ручная установка PostgreSQL)
-- Telegram аккаунт с API ключами
+- `.env` и `*.session` **не попадают в git** (защищены `.gitignore`)
+- Все данные хранятся **только локально** на твоём компьютере
+- Никакие данные не передаются на сторонние серверы
 
 ---
 
-## Безопасность
+<div align="center">
 
-- `.env` и `*.session` файлы **не попадают в git** (в `.gitignore`)
-- Данные хранятся только локально на твоём компьютере
-- Никакие данные не отправляются на сторонние серверы
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:1a7bbf,100:2AABEE&height=100&section=footer" width="100%"/>
+
+</div>
 
 
 ## Features
