@@ -21,6 +21,11 @@
 
 <br/>
 
+[![Watch Demo](https://img.shields.io/badge/Watch-Demo%20GIF-0ea5e9?style=for-the-badge&logo=icloud&logoColor=white)](#-gif-demo)
+[![Start in 30 sec](https://img.shields.io/badge/Start-in%2030%20sec-22c55e?style=for-the-badge&logo=rocket&logoColor=white)](#-one-click-start-for-beginners)
+
+<br/>
+
 > Part of the **[FABRICBOT ECOSYSTEM](https://github.com/kirbudilov01)** — open-source tools for sales automation & lead generation
 
 <br/>
@@ -40,6 +45,17 @@
 <div align="center">
 <img src="assets/demo.gif" alt="Telegram Lead Generator demo" width="100%" />
 </div>
+
+---
+
+## 🆚 Before / After
+
+| Before | After |
+|---|---|
+| Thousands of chats, no priority, chaos | Top leads ranked by score and activity |
+| Manual scrolling and guesswork | Structured CSV + multi-sheet XLSX bundle |
+| No clear follow-up sequence | `top100_priority.csv` gives an immediate action queue |
+| Data scattered in Telegram only | Local database + export files on Desktop |
 
 ---
 
@@ -304,6 +320,28 @@ python main.py stats
 - `.env` and `*.session` files are in `.gitignore` — **never committed to git**
 - All data is stored **locally on your machine only**
 - Nothing is sent to third-party servers
+
+---
+
+## ❓ Stuck? Fast Fixes
+
+**Problem:** Setup asks for API keys and you don't know where to get them  
+**Fix:** Open https://my.telegram.org → "API development tools" → create app → copy `api_id` and `api_hash`.
+
+**Problem:** Nothing happens after one-click start  
+**Fix:** Run `chmod +x start.command` once, then run `./start.command` again.
+
+**Problem:** Telegram collection fails  
+**Fix:** Wait 10 minutes (rate limit), then retry. If needed, re-auth with `python auth.py`.
+
+**Problem:** AI chat does not respond  
+**Fix:**
+- Ollama: install from https://ollama.com and run `ollama pull llama3.1`
+- OpenAI: set `OPENAI_API_KEY`
+- Claude: set `ANTHROPIC_API_KEY`
+
+**Problem:** I only want the easiest mode  
+**Fix:** Use `./start.command` — it launches Ultra Noob Mode with recommended defaults.
 
 ---
 
