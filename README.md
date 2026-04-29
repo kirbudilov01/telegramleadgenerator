@@ -11,6 +11,7 @@
 [![License](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)](LICENSE)
 [![FABRICBOT](https://img.shields.io/badge/FABRICBOT-ECOSYSTEM-FF6B35?style=for-the-badge)](https://github.com/kirbudilov01)
 [![One-Click Start](https://img.shields.io/badge/One--Click-START.command-2ea44f?style=for-the-badge)](#-one-click-start-for-beginners)
+[![Ultra Noob Mode](https://img.shields.io/badge/Ultra%20Noob-ON-00C2A8?style=for-the-badge)](#-ultra-noob-mode-absolute-beginner)
 
 <br/>
 
@@ -30,6 +31,14 @@
 [![X](https://img.shields.io/badge/X-@kirillfbc-111111?style=for-the-badge&logo=x&logoColor=white)](https://x.com/kirillfbc)
 [![Community](https://img.shields.io/badge/Community-Reposearchengine-1D9BF0?style=for-the-badge&logo=githubpages&logoColor=white)](https://kirbudilov01.github.io/reposearchengine/)
 
+</div>
+
+---
+
+## 🎬 GIF Demo
+
+<div align="center">
+<img src="assets/demo.gif" alt="Telegram Lead Generator demo" width="100%" />
 </div>
 
 ---
@@ -75,10 +84,26 @@ chmod +x start.command && ./start.command
 
 What this launcher does:
 - Runs setup automatically if this is your first run
-- Opens an interactive menu with simple button-like choices
+- Launches **Ultra Noob Mode** automatically
 - Starts collection + analysis
 - Saves result files to Desktop, including full raw history CSV
 - Optionally opens local AI chat (Ollama)
+
+---
+
+## 🧠 Ultra Noob Mode (absolute beginner)
+
+Use this if you want the safest, easiest path:
+
+```bash
+./start.command
+```
+
+What Ultra Noob Mode does automatically:
+- Picks **Smart Filter** (personal chats only, no bots/channels)
+- Picks **Full collection**
+- Uses beginner-safe defaults with minimal questions
+- Keeps all advanced options available in normal mode (`bash run.sh`)
 
 ---
 

@@ -15,4 +15,4 @@ clear
 echo ""
 echo "Launching Telegram Lead Generator..."
 echo ""
-bash run.sh
+bash run.sh --ultra-noob
