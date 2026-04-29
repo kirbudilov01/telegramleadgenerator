@@ -185,8 +185,30 @@ echo ""
 read -p "  Launch local AI chat now? [y/N]: " AI_CHOICE
 if [[ "$AI_CHOICE" =~ ^[Yy]$ ]]; then
     echo ""
-    hint "Requires Ollama running locally"
-    hint "If needed: install from https://ollama.com and run: ollama pull llama3.1"
+    echo "  Choose AI provider:"
+    echo "  1) Ollama (local, recommended)"
+    echo "  2) OpenAI API"
+    echo "  3) Anthropic Claude API"
     echo ""
-    python local_ai_chat.py --results-dir "$RESULT_DIR" --model llama3.1 || true
+    read -p "  Choice [1/2/3, default 1]: " AI_PROVIDER_CHOICE
+    AI_PROVIDER_CHOICE="${AI_PROVIDER_CHOICE:-1}"
+
+    AI_PROVIDER="ollama"
+    AI_MODEL="llama3.1"
+
+    if [[ "$AI_PROVIDER_CHOICE" == "2" ]]; then
+        AI_PROVIDER="openai"
+        AI_MODEL="gpt-4o-mini"
+        hint "Requires OPENAI_API_KEY in your environment or .env"
+    elif [[ "$AI_PROVIDER_CHOICE" == "3" ]]; then
+        AI_PROVIDER="anthropic"
+        AI_MODEL="claude-3-5-sonnet-latest"
+        hint "Requires ANTHROPIC_API_KEY in your environment or .env"
+    else
+        hint "Requires Ollama running locally"
+        hint "If needed: install from https://ollama.com and run: ollama pull llama3.1"
+    fi
+
+    echo ""
+    python local_ai_chat.py --results-dir "$RESULT_DIR" --provider "$AI_PROVIDER" --model "$AI_MODEL" || true
 fi

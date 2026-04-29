@@ -1,6 +1,7 @@
 import argparse
 import csv
 import json
+import os
 import sys
 import urllib.error
 import urllib.request
@@ -79,20 +80,107 @@ def ollama_chat(model: str, messages: list[dict]) -> str:
     return message.get("content", "No response returned.")
 
 
+def openai_chat(model: str, messages: list[dict], api_key: str) -> str:
+    payload = {
+        "model": model,
+        "messages": messages,
+        "temperature": 0.2,
+    }
+    data = json.dumps(payload).encode("utf-8")
+
+    req = urllib.request.Request(
+        "https://api.openai.com/v1/chat/completions",
+        data=data,
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {api_key}",
+        },
+        method="POST",
+    )
+
+    with urllib.request.urlopen(req, timeout=120) as resp:
+        result = json.loads(resp.read().decode("utf-8"))
+
+    choices = result.get("choices", [])
+    if not choices:
+        return "No response returned."
+    return choices[0].get("message", {}).get("content", "No response returned.")
+
+
+def anthropic_chat(model: str, messages: list[dict], api_key: str) -> str:
+    system_text = "\n\n".join(m["content"] for m in messages if m.get("role") == "system")
+    user_assistant_messages = [m for m in messages if m.get("role") in {"user", "assistant"}]
+
+    payload = {
+        "model": model,
+        "max_tokens": 1000,
+        "system": system_text,
+        "messages": user_assistant_messages,
+    }
+    data = json.dumps(payload).encode("utf-8")
+
+    req = urllib.request.Request(
+        "https://api.anthropic.com/v1/messages",
+        data=data,
+        headers={
+            "Content-Type": "application/json",
+            "x-api-key": api_key,
+            "anthropic-version": "2023-06-01",
+        },
+        method="POST",
+    )
+
+    with urllib.request.urlopen(req, timeout=120) as resp:
+        result = json.loads(resp.read().decode("utf-8"))
+
+    blocks = result.get("content", [])
+    texts = [b.get("text", "") for b in blocks if b.get("type") == "text"]
+    return "\n".join(t for t in texts if t).strip() or "No response returned."
+
+
+def dispatch_chat(provider: str, model: str, messages: list[dict]) -> str:
+    provider = provider.lower()
+    if provider == "ollama":
+        return ollama_chat(model, messages)
+
+    if provider == "openai":
+        api_key = os.getenv("OPENAI_API_KEY", "").strip()
+        if not api_key:
+            raise RuntimeError("OPENAI_API_KEY is not set")
+        return openai_chat(model, messages, api_key)
+
+    if provider in {"anthropic", "claude"}:
+        api_key = os.getenv("ANTHROPIC_API_KEY", "").strip()
+        if not api_key:
+            raise RuntimeError("ANTHROPIC_API_KEY is not set")
+        return anthropic_chat(model, messages, api_key)
+
+    raise RuntimeError(f"Unknown provider: {provider}")
+
+
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Local AI chat over Telegram CSV results (Ollama)")
+    parser = argparse.ArgumentParser(
+        description="AI chat over Telegram CSV results (Ollama / OpenAI / Anthropic)"
+    )
     parser.add_argument(
         "--results-dir",
         default=".",
         help="Directory containing top100_priority.csv and all_chats.csv",
     )
-    parser.add_argument("--model", default="llama3.1", help="Ollama model name")
+    parser.add_argument(
+        "--provider",
+        default="ollama",
+        choices=["ollama", "openai", "anthropic", "claude"],
+        help="LLM provider",
+    )
+    parser.add_argument("--model", default="llama3.1", help="Model name for selected provider")
     args = parser.parse_args()
 
     results_dir = Path(args.results_dir).resolve()
     context = build_context(results_dir)
 
-    print("\nLocal AI Chat (Ollama)")
+    print("\nAI Chat over your results")
+    print(f"Provider: {args.provider}")
     print(f"Results folder: {results_dir}")
     print(f"Model: {args.model}")
     print("Type 'exit' to quit.\n")
@@ -118,11 +206,19 @@ def main() -> int:
         messages.append({"role": "user", "content": user_text})
 
         try:
-            answer = ollama_chat(args.model, messages)
+            answer = dispatch_chat(args.provider, args.model, messages)
         except urllib.error.URLError:
-            print("\nCould not connect to Ollama at http://127.0.0.1:11434")
-            print("Install and run Ollama first: https://ollama.com")
-            print("Then run: ollama pull llama3.1")
+            print("\nCould not connect to the selected provider endpoint.")
+            if args.provider == "ollama":
+                print("Install and run Ollama first: https://ollama.com")
+                print("Then run: ollama pull llama3.1")
+            return 1
+        except RuntimeError as e:
+            print(f"\nConfiguration error: {e}")
+            if args.provider == "openai":
+                print("Set key: export OPENAI_API_KEY='your_key'")
+            elif args.provider in {"anthropic", "claude"}:
+                print("Set key: export ANTHROPIC_API_KEY='your_key'")
             return 1
         except Exception as e:
             print(f"\nAI request failed: {e}")

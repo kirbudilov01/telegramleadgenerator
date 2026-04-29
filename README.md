@@ -168,11 +168,23 @@ The script asks:
 
 ```
 Launch local AI chat now? [y/N]
+
+Choose AI provider:
+     1) Ollama (local)
+     2) OpenAI API
+     3) Anthropic Claude API
 ```
 
 Requirements:
 - Install Ollama: https://ollama.com
 - Pull model once: `ollama pull llama3.1`
+- For OpenAI: set `OPENAI_API_KEY`
+- For Claude: set `ANTHROPIC_API_KEY`
+
+Default models:
+- Ollama: `llama3.1`
+- OpenAI: `gpt-4o-mini`
+- Anthropic: `claude-3-5-sonnet-latest`
 
 Then you can type prompts like:
 - "Show the top 10 warm leads in fintech"
@@ -260,6 +272,14 @@ python main.py stats
 ## 🤝 Contributing
 
 Pull requests are welcome. For major changes, open an issue first.
+
+---
+
+## 🌐 FABRICBOT Links
+
+- YouTube: https://www.youtube.com/@fabricbotecosystem
+- X (Twitter): https://x.com/kirillfbc
+- Community: https://kirbudilov01.github.io/reposearchengine/
 
 ---
 
