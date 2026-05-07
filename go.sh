@@ -61,6 +61,38 @@ check_x_config() {
   fi
 }
 
+patch_x_browser_driver() {
+  local target="$X_DIR/src/agents/browserDriver.js"
+  if [ ! -f "$target" ]; then
+    return
+  fi
+  if grep -q "X_BROWSER_WIDTH" "$target"; then
+    return
+  fi
+
+  python3 - <<'PY' "$target"
+from pathlib import Path
+import sys
+
+p = Path(sys.argv[1])
+s = p.read_text(encoding='utf-8')
+
+old_block = """    this._fingerprint = this.antiDetection.generateFingerprint();\n\n    const args = [\n      '--no-sandbox',\n      '--disable-setuid-sandbox',\n      '--disable-blink-features=AutomationControlled',\n      `--window-size=${this._fingerprint.viewport.width},${this._fingerprint.viewport.height}`,\n    ];\n"""
+new_block = """    this._fingerprint = this.antiDetection.generateFingerprint();\n\n    const envWidth = parseInt(process.env.X_BROWSER_WIDTH || '', 10);\n    const envHeight = parseInt(process.env.X_BROWSER_HEIGHT || '', 10);\n    const envX = parseInt(process.env.X_BROWSER_X || '0', 10);\n    const envY = parseInt(process.env.X_BROWSER_Y || '0', 10);\n\n    const viewport = {\n      width: Number.isFinite(envWidth) && envWidth > 0 ? envWidth : this._fingerprint.viewport.width,\n      height: Number.isFinite(envHeight) && envHeight > 0 ? envHeight : this._fingerprint.viewport.height,\n    };\n\n    const args = [\n      '--no-sandbox',\n      '--disable-setuid-sandbox',\n      '--disable-blink-features=AutomationControlled',\n      `--window-size=${viewport.width},${viewport.height}`,\n      `--window-position=${Number.isFinite(envX) ? envX : 0},${Number.isFinite(envY) ? envY : 0}`,\n    ];\n"""
+
+if old_block not in s:
+    print('WARN: X browser driver launch block not found; skipped auto-patch')
+    sys.exit(0)
+
+s = s.replace(old_block, new_block, 1)
+s = s.replace('      defaultViewport: this._fingerprint.viewport,', '      defaultViewport: viewport,', 1)
+s = s.replace('    console.log(`🌐 Browser launched (${this._fingerprint.viewport.width}x${this._fingerprint.viewport.height}, headless=${this.headless})`);', '    console.log(`🌐 Browser launched (${viewport.width}x${viewport.height}, headless=${this.headless})`);', 1)
+
+p.write_text(s, encoding='utf-8')
+print('Patched X browserDriver.js with env-based viewport overrides')
+PY
+}
+
 cmd="${1:-doctor}"
 
 case "$cmd" in
@@ -109,6 +141,7 @@ case "$cmd" in
     fi
 
     (cd "$X_DIR" && npm install)
+    patch_x_browser_driver
     echo "Init complete. Run: $0 login"
     ;;
 
