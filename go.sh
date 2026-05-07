@@ -6,6 +6,9 @@ THREADS_DIR="$ROOT_DIR/threads_autopilot"
 X_DIR="${X_AGENT_DIR:-$ROOT_DIR/../X-ACTIONS-AGENT}"
 SESSION="${DUAL_SESSION_NAME:-dual_agents}"
 PYTHON_BIN="$ROOT_DIR/venv/bin/python"
+LAYOUT="${DUAL_LAYOUT:-even-horizontal}"
+TMUX_WIDTH="${DUAL_TMUX_WIDTH:-$(tput cols 2>/dev/null || echo 240)}"
+TMUX_HEIGHT="${DUAL_TMUX_HEIGHT:-$(tput lines 2>/dev/null || echo 60)}"
 
 usage() {
   echo "Usage: $0 {doctor|init|login|start|attach|stop|restart|status}" >&2
@@ -132,16 +135,25 @@ case "$cmd" in
       exit 0
     fi
 
-    tmux new-session -d -s "$SESSION" -x 240 -y 60 -c "$THREADS_DIR"
+    tmux new-session -d -s "$SESSION" -x "$TMUX_WIDTH" -y "$TMUX_HEIGHT" -c "$THREADS_DIR"
     tmux setw -t "$SESSION":0 remain-on-exit on
 
-    tmux send-keys -t "$SESSION":0.0 "cd '$THREADS_DIR' && ../venv/bin/python autopilot.py --profile safe --verbose 2>&1 | tee -a autopilot.log" C-m
+    tmux send-keys -t "$SESSION":0.0 "cd '$THREADS_DIR' && THREADS_WIN_X=${THREADS_WIN_X:-0} THREADS_WIN_Y=${THREADS_WIN_Y:-0} THREADS_WIN_WIDTH=${THREADS_WIN_WIDTH:-960} THREADS_WIN_HEIGHT=${THREADS_WIN_HEIGHT:-1080} ../venv/bin/python autopilot.py --profile safe --verbose 2>&1 | tee -a autopilot.log" C-m
 
     tmux split-window -h -t "$SESSION":0 -c "$X_DIR"
-    tmux send-keys -t "$SESSION":0.1 "cd '$X_DIR' && mkdir -p logs && npm run agent 2>&1 | tee -a logs/agent.log" C-m
+    tmux send-keys -t "$SESSION":0.1 "cd '$X_DIR' && mkdir -p logs && X_BROWSER_WIDTH=${X_BROWSER_WIDTH:-1280} X_BROWSER_HEIGHT=${X_BROWSER_HEIGHT:-900} X_BROWSER_X=${X_BROWSER_X:-980} X_BROWSER_Y=${X_BROWSER_Y:-0} npm run agent 2>&1 | tee -a logs/agent.log" C-m
 
-    tmux select-layout -t "$SESSION":0 even-horizontal
+    case "$LAYOUT" in
+      even-horizontal|even-vertical|main-horizontal|main-vertical|tiled)
+        tmux select-layout -t "$SESSION":0 "$LAYOUT"
+        ;;
+      *)
+        tmux select-layout -t "$SESSION":0 even-horizontal
+        ;;
+    esac
+
     echo "Started tmux session: $SESSION"
+    echo "Layout: $LAYOUT | Size: ${TMUX_WIDTH}x${TMUX_HEIGHT}"
     tmux attach -t "$SESSION"
     ;;
 

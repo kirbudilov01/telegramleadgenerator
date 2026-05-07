@@ -564,10 +564,14 @@ async def build_context(cfg: dict, headful_override: bool | None = None) -> tupl
     headful = cfg.get("headful", True) if headful_override is None else headful_override
     use_chrome_channel = bool(cfg.get("use_chrome_channel", True))
     window = cfg.get("window", {"x": 0, "y": 0, "width": 960, "height": 1080})
+    win_x = int(os.getenv("THREADS_WIN_X", window.get("x", 0)))
+    win_y = int(os.getenv("THREADS_WIN_Y", window.get("y", 0)))
+    win_w = int(os.getenv("THREADS_WIN_WIDTH", window.get("width", 960)))
+    win_h = int(os.getenv("THREADS_WIN_HEIGHT", window.get("height", 1080)))
 
     args = [
-        f"--window-position={int(window.get('x', 0))},{int(window.get('y', 0))}",
-        f"--window-size={int(window.get('width', 960))},{int(window.get('height', 1080))}",
+        f"--window-position={win_x},{win_y}",
+        f"--window-size={win_w},{win_h}",
         "--no-first-run",
         "--no-default-browser-check",
         "--disable-blink-features=AutomationControlled",
@@ -581,7 +585,7 @@ async def build_context(cfg: dict, headful_override: bool | None = None) -> tupl
         "user_data_dir": str(AGENT_PROFILE_DIR),
         "headless": not headful,
         "args": args,
-        "viewport": {"width": int(window.get("width", 960)), "height": int(window.get("height", 1080))},
+        "viewport": {"width": win_w, "height": win_h},
         "user_agent": (
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
             "AppleWebKit/537.36 (KHTML, like Gecko) "
