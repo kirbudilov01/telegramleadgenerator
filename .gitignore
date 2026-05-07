@@ -23,6 +23,13 @@ exports/*.xlsx
 *.log
 nohup.out
 
+# Threads autopilot local state
+threads_autopilot/config.json
+threads_autopilot/state.json
+threads_autopilot/threads_storage_state.json
+threads_autopilot/chrome_profile/
+threads_autopilot/autopilot.log
+
 # IDE / editor
 .vscode/
 .idea/

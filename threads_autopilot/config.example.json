@@ -1,0 +1,78 @@
+{
+  "profile": "safe",
+  "headful": true,
+  "window": {
+    "x": 0,
+    "y": 0,
+    "width": 960,
+    "height": 1080
+  },
+  "use_chrome_channel": true,
+  "use_ollama": false,
+  "llm_provider": "github_models",
+  "github_token_env": "GITHUB_TOKEN",
+  "github_token": "",
+  "github_model": "claude-3-5-sonnet-20241022",
+  "openrouter_api_key_env": "OPENROUTER_API_KEY",
+  "openrouter_model": "anthropic/claude-sonnet-4",
+  "openrouter_timeout_seconds": 60,
+  "ollama_host": "http://127.0.0.1:11434",
+  "ollama_model": "llama3.1",
+  "ollama_timeout_seconds": 45,
+  "auto_send_min_score": 0.82,
+  "draft_min_score": 0.7,
+  "persona_file": "agent_kirill_threads.md",
+  "auto_keyword_generation": true,
+  "generated_keywords": 6,
+  "keyword_limit": 22,
+  "keywords": [
+    "it",
+    "ии",
+    "ai",
+    "app",
+    "web",
+    "telegram",
+    "телеграм",
+    "нужен разработчик",
+    "ищу разработчика",
+    "need developer",
+    "hire developer",
+    "build app",
+    "telegram bot"
+  ],
+  "profile_overrides": {
+    "cycle_minutes": 30,
+    "max_replies_per_cycle": 1,
+    "max_replies_per_day": 24
+  },
+  "active_hours": {
+    "weekday": [
+      "09:00",
+      "19:00"
+    ],
+    "weekend": [
+      "10:00",
+      "18:00"
+    ]
+  },
+  "target_timezones": [
+    "America/New_York",
+    "America/Chicago",
+    "America/Los_Angeles"
+  ],
+  "action_mix": {
+    "reply": 0.58,
+    "like": 0.22,
+    "follow": 0.12,
+    "browse": 0.08
+  },
+  "hourly_action_cap": 8,
+  "typing_delay_ms": [
+    45,
+    120
+  ],
+  "scroll_depth_range": [
+    3,
+    8
+  ]
+}

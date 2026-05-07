@@ -1,0 +1,6 @@
+config.json
+state.json
+threads_storage_state.json
+chrome_profile/
+*.log
+__pycache__/
