@@ -1,449 +1,255 @@
-<div align="center">
+# 🚀 Dual Social Media Autopilot: Threads + X
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:2AABEE,100:1a7bbf&height=200&section=header&text=Telegram%20Lead%20Generator&fontSize=38&fontColor=ffffff&fontAlignY=40&desc=Find%20your%20hottest%20leads%20across%20thousands%20of%20chats%20in%20minutes&descAlignY=60&descSize=15" width="100%"/>
+A production-ready dual social media lead generation and thought leadership system. Automatically discovers relevant leads on Threads and generates authority content on X (Twitter).
 
-<br/>
-
-[![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18-336791?style=for-the-badge&logo=postgresql&logoColor=white)](https://postgresql.org)
-[![Telegram](https://img.shields.io/badge/Telegram-MTProto-2AABEE?style=for-the-badge&logo=telegram&logoColor=white)](https://my.telegram.org)
-[![TON](https://img.shields.io/badge/TON-Project-0098EA?style=for-the-badge&logo=ton&logoColor=white)](https://ton.org)
-[![macOS](https://img.shields.io/badge/macOS-12+-000000?style=for-the-badge&logo=apple&logoColor=white)](https://apple.com)
-[![License](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)](LICENSE)
-[![FABRICBOT](https://img.shields.io/badge/FABRICBOT-ECOSYSTEM-FF6B35?style=for-the-badge)](https://github.com/kirbudilov01)
-[![One-Click Start](https://img.shields.io/badge/One--Click-START.command-2ea44f?style=for-the-badge)](#-one-click-start-for-beginners)
-[![Ultra Noob Mode](https://img.shields.io/badge/Ultra%20Noob-ON-00C2A8?style=for-the-badge)](#-ultra-noob-mode-absolute-beginner)
-
-<br/>
-
-**Parses your full Telegram history → PostgreSQL → Priority-ranked CSV reports on your Desktop**
-
-[Quick Start](#-quick-start-one-command) · [Before You Begin](#-before-you-begin) · [How It Works](#%EF%B8%8F-how-it-works) · [CSV Format](#-csv-output-format)
-
-<br/>
-
-[![Watch Demo](https://img.shields.io/badge/Watch-Demo%20GIF-0ea5e9?style=for-the-badge&logo=icloud&logoColor=white)](#-gif-demo)
-[![Start in 30 sec](https://img.shields.io/badge/Start-in%2030%20sec-22c55e?style=for-the-badge&logo=rocket&logoColor=white)](#-one-click-start-for-beginners)
-
-<br/>
-
-> Part of the **[FABRICBOT ECOSYSTEM](https://github.com/kirbudilov01)** — open-source tools for sales automation & lead generation
-
-<br/>
-
-<img src="https://capsule-render.vercel.app/api?type=rect&color=0:ff7a18,100:af002d&height=90&section=header&text=FABRICBOT%20NETWORK&fontSize=28&fontColor=ffffff" width="100%"/>
-
-[![YouTube](https://img.shields.io/badge/YouTube-@fabricbotecosystem-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/@fabricbotecosystem)
-[![X](https://img.shields.io/badge/X-@kirillfbc-111111?style=for-the-badge&logo=x&logoColor=white)](https://x.com/kirillfbc)
-[![Community](https://img.shields.io/badge/Community-Reposearchengine-1D9BF0?style=for-the-badge&logo=githubpages&logoColor=white)](https://kirbudilov01.github.io/reposearchengine/)
-
-</div>
+**Status:** ✅ Production Ready | **Built:** 2026 | **Last Updated:** 2026-05-09
 
 ---
 
-## 🚀 Start Here (30 seconds)
+## 🎯 What It Does
 
-If you want the easiest path with the least friction:
+### Threads Agent (Lead Generation)
+- **Keyword Search**: Monitors 20+ keywords on Threads (e.g., "need developer", "hire developer")
+- **Post Classification**: Uses AI to identify high-intent, relevant leads
+- **Smart Replies**: Generates contextual, helpful replies in your voice
+- **Engagement Mix**: 58% replies, 22% likes, 12% follows, 8% browses
+- **Safety Scores**: Only sends high-confidence replies; drafts others for review
+
+### X Agent (Thought Leadership)
+- **Topic Monitoring**: Tracks 14+ niche keywords (AI products, Telegram, YouTube, etc.)
+- **Tweet Composition**: AI-generated, topical tweets in expert voice
+- **Scheduled Posting**: 3-8 tweets/day by relevance
+- **Engagement**: Automatic likes, retweets, replies to relevant discussions
+
+---
+
+## 🚀 Quick Start (5 Minutes)
 
 ```bash
-git clone https://github.com/kirbudilov01/telegramleadgenerator.git && cd telegramleadgenerator && chmod +x start.command && ./start.command
-```
-
-That single command will:
-- Run setup if needed
-- Launch Ultra Noob Mode with recommended settings
-- Collect, analyze, and export files to Desktop
-
----
-
-## 🎬 GIF Demo
-
-<div align="center">
-<img src="assets/demo.gif" alt="Telegram Lead Generator demo" width="100%" />
-</div>
-
----
-
-## 🆚 Before / After
-
-| Before | After |
-|---|---|
-| Thousands of chats, no priority, chaos | Top leads ranked by score and activity |
-| Manual scrolling and guesswork | Structured CSV + multi-sheet XLSX bundle |
-| No clear follow-up sequence | `top100_priority.csv` gives an immediate action queue |
-| Data scattered in Telegram only | Local database + export files on Desktop |
-
----
-
-## ✨ What It Does
-
-| | |
-|---|---|
-| 📥 | Downloads **full message history** from all your personal chats (5000+ dialogs) |
-| 🤖 | Automatically filters out **bots, channels, and spam** |
-| 🔍 | Scans for **keywords**: AI, marketing, development, YouTube, pricing, etc. |
-| 📊 | Assigns **priority scores 1–5** based on activity and conversation topics |
-| 🖥️ | Saves **analysis CSVs + full raw history CSV + multi-sheet XLSX** to your Desktop |
-
----
-
-## 📈 Live Snapshot
-
-<div align="center">
-
-![Chats](https://img.shields.io/badge/Chats-5000%2B-0ea5e9?style=for-the-badge)
-![Messages](https://img.shields.io/badge/Messages-800k%2B-22c55e?style=for-the-badge)
-![Output](https://img.shields.io/badge/Output-CSV%20%2B%20XLSX-f59e0b?style=for-the-badge)
-![Mode](https://img.shields.io/badge/Mode-Ultra%20Noob-14b8a6?style=for-the-badge)
-
-</div>
-
----
-
-## 🛡️ Why You Can Trust This
-
-| Guarantee | What it means |
-|---|---|
-| Local-first | Your data stays on your machine |
-| No forced cloud upload | AI can run via local Ollama |
-| Secrets protected | `.env` and `*.session` are git-ignored |
-| Clear exports | You always get raw full history + lead-focused outputs |
-
----
-
-## 🎯 Best Use Cases
-
-| Use case | Outcome |
-|---|---|
-| Sales follow-ups | Priority-ranked leads with conversation context |
-| Partnerships & BD | Find warm intros and active collaborators |
-| Recruiting & hiring | Spot candidates discussing relevant skills |
-| TON project outreach | Discover hot TON conversations and prioritize follow-ups |
-
----
-
-## 💎 TON Focus (mandatory track)
-
-This project is part of our TON-oriented growth stack.
-
-What TON teams can do with it:
-- Detect active conversations around TON ecosystem topics
-- Segment priority leads by recency and intent
-- Build fast outreach queues for ecosystem growth and partnerships
-- Keep full raw history for compliance and later deep-dive analysis
-
----
-
-## 🌍 FABRICBOT Community Model
-
-Our community is built around two tracks:
-
-| Track | Access model | Outcome |
-|---|---|---|
-| Open Repo Scout | Open-source public repos | Fast discovery of useful public workflows and tooling |
-| Workflow Pro (Paid) | Advanced workflow support + closed/private repos | Custom infra, higher signal lead systems, and production-grade integration |
-
-Community hub:
-- https://kirbudilov01.github.io/reposearchengine/
-
----
-
-## ⚡ Quick Start (one command)
-
-> **Prerequisites:** macOS 12+, internet connection, Telegram account
-> The installer will guide you through everything else — including where to get API keys.
-
-```bash
-git clone https://github.com/kirbudilov01/telegramleadgenerator.git && cd telegramleadgenerator && bash setup.sh
-```
-
-Then run the collector:
-
-```bash
-bash run.sh
-```
-
-That's it. CSV reports will appear on your Desktop automatically.
-
----
-
-## 🟢 One-Click Start (for beginners)
-
-After cloning the repository, you can run everything with one launcher:
-
-```bash
-chmod +x start.command && ./start.command
-```
-
-What this launcher does:
-- Runs setup automatically if this is your first run
-- Launches **Ultra Noob Mode** automatically
-- Starts collection + analysis
-- Saves result files to Desktop, including full raw history CSV
-- Optionally opens local AI chat (Ollama)
-
----
-
-## 🧠 Ultra Noob Mode (absolute beginner)
-
-Use this if you want the safest, easiest path:
-
-```bash
-./start.command
-```
-
-What Ultra Noob Mode does automatically:
-- Picks **Smart Filter** (personal chats only, no bots/channels)
-- Picks **Full collection**
-- Uses beginner-safe defaults with minimal questions
-- Keeps all advanced options available in normal mode (`bash run.sh`)
-
----
-
-## 📋 Before You Begin
-
-Before running setup, you'll need **3 things** from Telegram:
-
-### 1. Get your API credentials (free, takes 2 min)
-
-1. Open **[my.telegram.org](https://my.telegram.org)** in your browser
-2. Sign in with your Telegram phone number
-3. Click **"API development tools"**
-4. Create a new app — any name works (e.g. `MyApp`)
-5. Copy **`App api_id`** and **`App api_hash`**
-
-> The setup script will ask for these values interactively — no need to edit any files manually.
-
-### 2. Your phone number
-
-Format: `+19991234567` (country code + number, no spaces)
-
-### 3. Access to your Telegram account
-
-During setup, Telegram will send you a confirmation code.
-Open your Telegram app and enter the code when prompted.
-
----
-
-## 🚀 Step-by-Step Setup
-
-```bash
-# Step 1 — Clone the repo
+# Clone repo
 git clone https://github.com/kirbudilov01/telegramleadgenerator.git
-cd telegramleadgenerator
+cd "TELEGRAM : THREADS AGENT"
 
-# Step 2 — Run the installer (installs everything automatically)
-bash setup.sh
+# One-time setup (installs dependencies)
+./go.sh init
+
+# Get GitHub token: https://github.com/settings/tokens (no scopes needed)
+export GITHUB_TOKEN=ghp_your_token_here
+
+# Login to both agents (manual auth, one-time)
+./go.sh login
+
+# Start both agents side-by-side
+./go.sh start
+
+# After 30 minutes, verify it works:
+./go.sh doctor
 ```
 
-The installer will walk you through each step in the terminal:
+**For detailed instructions**, see [SETUP.md](SETUP.md).
+
+---
+
+## 📂 Repository Structure
 
 ```
-[1/8] Homebrew          → installs if missing
-[2/8] Python 3.11       → installs if missing
-[3/8] PostgreSQL 18     → installs and starts
-[4/8] Dependencies      → pip install -r requirements.txt
-[5/8] Database          → creates telegram_export
-[6/8] API_ID            → shows where to get it, asks in terminal
-[7/8] API_HASH + Phone  → same
-[8/8] Telegram auth     → sends code to your phone
+.
+├── threads_autopilot/             # Threads lead generation agent (PRIMARY)
+│   ├── autopilot.py              # Main agent + LLM logic
+│   ├── config.json               # Configuration
+│   ├── persona.md                # Kirill's persona (about3.md)
+│   ├── chrome_profile/           # Persistent browser session
+│   └── state.json                # Agent state (seen posts, stats)
+│
+├── go.sh                         # Unified launcher
+├── .env.example                  # Environment variables template
+├── SETUP.md                      # Complete setup guide
+├── PREFLIGHT.md                  # 5-minute pre-run checklist
+└── README.md                     # This file
+
+X Agent (separate repo):
+../X-ACTIONS-AGENT/
+  ├── src/agents/                 # X agent code
+  ├── data/agent-config.json     # X configuration
+  ├── data/session.json           # X browser session
+  └── logs/agent.log              # X execution log
 ```
+
+---
+
+## 🏗️ Architecture
+
+### Multi-Repo Design
+- **Threads Agent** (this repo): Full lead generation workflow
+- **X Agent** (sibling repo): Twitter automation
+- **Launcher** (`go.sh`): Runs both in tmux side-by-side
+
+Both agents are independent with separate:
+- Configurations (config.json vs. agent-config.json)
+- Sessions (chrome_profile/ vs. data/session.json)
+- LLM backends (GitHub Models vs. OpenRouter)
+- Logging (autopilot.log vs. logs/agent.log)
+
+### Supported Networks
+✅ **Threads.net** (Lead generation + engagement)  
+✅ **X/Twitter** (Thought leadership + engagement)  
+❌ Facebook, Instagram, TikTok (Not currently supported)
+
+### LLM Backend (Intelligent Fallback Chain)
+
+| Priority | Service | Cost | Requires |
+|----------|---------|------|----------|
+| 1️⃣ **GitHub Models** | Free Claude API | $0/month | GitHub token |
+| 2️⃣ OpenRouter | Anthropic via proxy | ~$0.003/reply | OpenRouter key |
+| 3️⃣ Ollama Local | Local llama3.1 | $0 | ollama serve running |
+| 4️⃣ Regex Fallback | Pattern-based rules | $0 | None (offline) |
+
+---
+
+## ⚙️ Configuration
+
+### Threads Agent (`threads_autopilot/config.json`)
+
+```json
+{
+  "profile": "safe",                  // or "balanced", "aggressive"
+  "llm_provider": "github_models",    // Primary LLM
+  "github_token": "ghp_...",          // Your GitHub token
+  "auto_send_min_score": 0.82,        // Only auto-send if confidence ≥ 82%
+  "draft_min_score": 0.7,             // Draft if confidence 70-82%
+  "keywords": [22 targeted keywords],
+  "action_mix": {                     // Behavioral mix
+    "reply": 0.58,  "like": 0.22,
+    "follow": 0.12, "browse": 0.08
+  }
+}
+```
+
+### X Agent (`../X-ACTIONS-AGENT/data/agent-config.json`)
+
+```json
+{
+  "niche": {
+    "name": "AI Products, Content Systems & Telegram Commerce",
+    "searchTerms": [14 niche keywords]
+  },
+  "persona": { /* Kirill's expertise, opinions, example tweets */ },
+  "llm": {
+    "provider": "openrouter",
+    "models": { /* fast, mid, smart tiers */ }
+  }
+}
+```
+
+---
+
+## 🔧 Commands Reference
 
 ```bash
-# Step 3 — Collect and analyze
-bash run.sh
+./go.sh doctor              # Health check (before everything)
+./go.sh init                # Install dependencies (one-time)
+./go.sh login [threads|x]   # Authenticate agents
+./go.sh start               # Launch both side-by-side
+./go.sh attach              # Reattach closed window
+./go.sh stop                # Stop gracefully
+./go.sh restart             # Restart both
+./go.sh status              # Show status + logs
 ```
-
-The terminal will ask two questions:
-
-```
-Choose collection profile:
-     1) Smart Filter (recommended)  personal only, no bots/channels
-     2) Custom selection            choose groups/bots/channels yourself
-
-Run mode?
-  1) Full collection          (first time)
-  2) New messages only        (already collected)
-
-Custom mode then asks:
-     - Include group chats? [y/N]
-     - Include bot dialogs? [y/N]
-     - Include channels? [y/N]
-```
-
-After completion, a folder `telegram_analysis_DATE/` appears on your Desktop.
 
 ---
 
-## 📂 Output Files
+## 📊 Expected Performance
 
-| File | Contents |
-|------|---------|
-| `top100_priority.csv` | ⭐ Top 100 by importance — **start here** |
-| `top100_by_activity.csv` | Top 100 by message count |
-| `all_chats.csv` | All analyzed chats |
-| `full_history_raw.csv` | Full raw CSV of the entire collected history |
-| `telegram_leads_bundle.xlsx` | Single Excel file with separate sheets for leads + full history |
+### Threads Agent (Safe Profile)
+- **Posts Found:** 15-30/day per keyword
+- **Replies Sent:** 2-5/day
+- **Engagement Rate:** 2-5%
+- **False Positives:** ~5-10%
 
----
-
-## 🤖 Optional Local AI Chat
-
-After each run, you can open a local AI chat over your generated CSV results.
-
-The script asks:
-
-```
-Launch local AI chat now? [y/N]
-
-Choose AI provider:
-     1) Ollama (local)
-     2) OpenAI API
-     3) Anthropic Claude API
-
-If you pick OpenAI Cloud:
-     1) GPT-5.3-Codex
-     2) GPT-4o-mini
-```
-
-Requirements:
-- Install Ollama: https://ollama.com
-- Pull model once: `ollama pull llama3.1`
-- For OpenAI: set `OPENAI_API_KEY`
-- For Claude: set `ANTHROPIC_API_KEY`
-
-Default models:
-- Ollama: `llama3.1`
-- OpenAI: `gpt-5.3-codex` (or `gpt-4o-mini`)
-- Anthropic: `claude-3-5-sonnet-latest`
-
-Then you can type prompts like:
-- "Show the top 10 warm leads in fintech"
-- "Which contacts discussed AI automation budgets?"
-- "Who should I follow up with this week and why?"
+### X Agent
+- **Tweets Posted:** 3-8/day
+- **Engagement:** 5-15 likes per tweet
+- **New Followers:** 10-30/month
 
 ---
 
-## ⚙️ How It Works
+## 🛠️ Troubleshooting
 
-```
-Telegram API
-     │
-     ▼
-Telethon (MTProto)
-     │  fetches full history of all dialogs
-     ▼
-PostgreSQL
-     │  stores chats + messages locally
-     ▼
-Analyzer
-     │  filters spam / bots / channels
-     │  keyword matching
-     │  priority scoring
-     ▼
-CSV on Desktop
-```
-
-**Priority scoring algorithm:**
-- `priority = 5` — 200+ messages + 3+ keywords matched → **hot lead**
-- `priority = 3` — 50+ messages or 3+ keywords → **warm**
-- `priority = 1` — everything else
-
----
-
-## 📋 CSV Output Format
-
-| Column | Description |
-|--------|---------|
-| `chat_name` | Username or chat title |
-| `chat_type` | `personal` / `group` |
-| `message_count` | Total messages in the dialog |
-| `priority` | 5 = hot, 3 = warm, 1 = cold |
-| `intent` | `interest` = discussed tasks/deals; `neutral` = casual chat |
-| `matched_keywords` | Keywords found in conversation |
-| `last_messages` | Last 5 messages (quick context preview) |
-
----
-
-## 🔧 Advanced
-
-**Collect groups too:**
+### "GitHub token not found"
 ```bash
-python main.py load --groups
+export GITHUB_TOKEN=ghp_your_token
+./go.sh start
 ```
 
-**Re-run analysis without re-collecting:**
+### "Threads browser won't authenticate"
 ```bash
-python analyze.py
+./go.sh login threads  # Opens browser for manual login
 ```
 
-**Check database stats:**
+### "X agent not tweeting"
 ```bash
-python main.py stats
+tail -20 ../X-ACTIONS-AGENT/logs/agent.log
+# Check for: OpenRouter key, session expired, no matching topics
+```
+
+See [PREFLIGHT.md](PREFLIGHT.md) for 5-minute checklist before running overnight.
+
+---
+
+## 📚 Documentation
+
+| Document | Purpose |
+|----------|---------|
+| [SETUP.md](SETUP.md) | Complete setup (clone → init → login → start) |
+| [PREFLIGHT.md](PREFLIGHT.md) | 5-minute pre-run checklist |
+| [.env.example](.env.example) | Environment variables |
+
+---
+
+## 🔐 Security
+
+- ✅ Secrets in `.gitignore` (config.json, .env, sessions)
+- ✅ GitHub token via env var or config (user chooses)
+- ✅ Browser profiles persist locally (no cloud)
+- ✅ No external tracking or logging
+
+---
+
+## 📈 Next Steps
+
+### First Time (Today)
+1. `./go.sh doctor` → check readiness
+2. `./go.sh init` → install deps
+3. `export GITHUB_TOKEN=ghp_...` → set token
+4. `./go.sh login` → authenticate both agents
+5. `./go.sh start` → run for 30 min to verify
+
+### Optimization (This Week)
+1. Review logs (autopilot.log, agent.log)
+2. Adjust keywords if needed
+3. Tweak scoring thresholds
+4. Change profile: safe → balanced → aggressive
+
+### Production (Next Week)
+1. Run `./go.sh start` overnight
+2. Monitor logs every 2-3 hours first time
+3. Safe to run 24/7 once confident
+
+---
+
+## 📞 Help
+
+```bash
+# Real-time logs
+tail -50 threads_autopilot/autopilot.log
+tail -50 ../X-ACTIONS-AGENT/logs/agent.log
+
+# Both in one view
+./go.sh attach  # then: Ctrl-B → arrow keys to switch panes
 ```
 
 ---
 
-## 📦 Requirements
-
-- **macOS 12+** (Apple Silicon & Intel)
-- Telegram account
-- API credentials from [my.telegram.org](https://my.telegram.org) *(free)*
-
----
-
-## 🔒 Privacy & Security
-
-- `.env` and `*.session` files are in `.gitignore` — **never committed to git**
-- All data is stored **locally on your machine only**
-- Nothing is sent to third-party servers
-
----
-
-## ❓ Stuck? Fast Fixes
-
-**Problem:** Setup asks for API keys and you don't know where to get them  
-**Fix:** Open https://my.telegram.org → "API development tools" → create app → copy `api_id` and `api_hash`.
-
-**Problem:** Nothing happens after one-click start  
-**Fix:** Run `chmod +x start.command` once, then run `./start.command` again.
-
-**Problem:** Telegram collection fails  
-**Fix:** Wait 10 minutes (rate limit), then retry. If needed, re-auth with `python auth.py`.
-
-**Problem:** AI chat does not respond  
-**Fix:**
-- Ollama: install from https://ollama.com and run `ollama pull llama3.1`
-- OpenAI: set `OPENAI_API_KEY`
-- Claude: set `ANTHROPIC_API_KEY`
-
-**Problem:** I only want the easiest mode  
-**Fix:** Use `./start.command` — it launches Ultra Noob Mode with recommended defaults.
-
----
-
-## 🗺️ Roadmap (Now / Next / Soon)
-
-| Stage | Focus |
-|---|---|
-| Now | One-click onboarding, Smart/Custom collection, CSV + XLSX outputs |
-| Next | Better AI memory over full-history exports, stronger lead scoring presets |
-| Soon | Extended TON templates, team workflows, and deeper closed-repo integration track |
-
----
-
-## 🤝 Contributing
-
-Pull requests are welcome. For major changes, open an issue first.
-
----
-
-<div align="center">
-
-**Built with ❤️ as part of the [FABRICBOT ECOSYSTEM](https://github.com/kirbudilov01) • Follow on [X @kirillfbc](https://x.com/kirillfbc)**
-
-*Open-source tools for sales automation, lead generation & Telegram data analysis*
-
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:1a7bbf,100:2AABEE&height=100&section=footer" width="100%"/>
-
-</div>
+**Built with:** Python (Playwright, AsyncIO) | Node.js (Puppeteer) | AI (Claude 3.5 Sonnet)  
+**License:** MIT  
+**Status:** ✅ Production Ready
