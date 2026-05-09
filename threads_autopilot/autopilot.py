@@ -7,6 +7,7 @@ import re
 import os
 import sys
 import time
+from collections import Counter
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -207,9 +208,18 @@ Base: {json.dumps(base_keywords)}"""
         except Exception:
             return []
 
-    def compose_reply(self, persona: str, post_text: str, author_handle: str) -> str:
+    def compose_reply(self, persona: str, post_text: str, author_handle: str, context_hint: str = "") -> str:
         prompt = f"""Write a short human Threads reply. Max 280 chars. No hashtags. Match post language.
-Persona: {persona[:400]}\nAuthor: {author_handle}\nPost: {post_text[:600]}\nReturn only the reply."""
+Keep it specific, conversational, and non-promotional.
+
+Context hint:
+{context_hint}
+
+Persona: {persona[:700]}
+Author: {author_handle}
+Post: {post_text[:700]}
+
+Return only the reply."""
         try:
             out = self._chat(prompt)
         except Exception:
@@ -384,7 +394,7 @@ The draft reply:
         except Exception:
             return True, 0.75
 
-    def compose_reply(self, persona: str, post_text: str, author_handle: str) -> str:
+    def compose_reply(self, persona: str, post_text: str, author_handle: str, context_hint: str = "") -> str:
         FEW_SHOT = """
 Examples of good replies (Kirill's voice):
 
@@ -416,6 +426,9 @@ RULES:
 - End with one natural open question that invites a real response
 - Match language of the post (Russian post → Russian reply, English → English)
 - Sound like a peer / practitioner, not a vendor
+
+CONTEXT HINT:
+{context_hint}
 
 Author: {author_handle}
 Post:
@@ -517,9 +530,113 @@ def in_active_window(cfg: dict) -> bool:
     return False
 
 
-def choose_action(action_mix: dict[str, float]) -> str:
+def get_behavior_context(cfg: dict, state: dict) -> dict[str, Any]:
+    timezones = cfg.get("target_timezones", ["America/New_York"])
+    now_tz = datetime.now(timezone.utc)
+    tz_name = "UTC"
+    for candidate in timezones:
+        try:
+            now_tz = datetime.now(ZoneInfo(candidate))
+            tz_name = candidate
+            break
+        except Exception:
+            continue
+
+    hour = now_tz.hour
+    if 6 <= hour < 10:
+        phase = "morning"
+    elif 10 <= hour < 14:
+        phase = "midday"
+    elif 14 <= hour < 19:
+        phase = "afternoon"
+    else:
+        phase = "evening"
+
+    recent = state.get("reply_history", [])[-12:]
+    action_counts = Counter(str(item.get("action", "")) for item in recent)
+    recent_replies = [str(item.get("reply", "")).strip() for item in recent if item.get("action") == "reply" and str(item.get("reply", "")).strip()]
+
+    return {
+        "timezone": tz_name,
+        "hour": hour,
+        "phase": phase,
+        "recent_action_counts": action_counts,
+        "recent_replies": recent_replies[-3:],
+        "recent_reply_count": action_counts.get("reply", 0),
+        "recent_follow_count": action_counts.get("follow", 0),
+        "recent_like_count": action_counts.get("like", 0),
+        "recent_browse_count": action_counts.get("browse", 0),
+    }
+
+
+def build_reply_context(cfg: dict, state: dict, behavior: dict[str, Any], post: CandidatePost) -> str:
+    keyword_history = state.get("keyword_history", [])[-6:]
+    recent_replies = behavior.get("recent_replies", [])
+    phase = behavior.get("phase", "midday")
+    tone_hint = {
+        "morning": "slightly warmer and curious",
+        "midday": "practical and concise",
+        "afternoon": "balanced, peer-to-peer",
+        "evening": "shorter and more direct",
+    }.get(phase, "practical and concise")
+
+    return (
+        f"Local time phase: {phase} ({behavior.get('timezone', 'UTC')}).\n"
+        f"Desired tone: {tone_hint}.\n"
+        f"Recent keywords explored: {', '.join(keyword_history) if keyword_history else 'none'}\n"
+        f"Recent replies already used: {(' | '.join(recent_replies) if recent_replies else 'none')}.\n"
+        f"Avoid repeating the same angle; make this reply feel fresh and specific to the post author.\n"
+        f"Target post author: {post.author_handle or 'unknown'}"
+    )
+
+
+def get_scroll_depth_range(cfg: dict, behavior: dict[str, Any]) -> list[int]:
+    base = cfg.get("scroll_depth_range", [3, 8])
+    if not isinstance(base, list) or len(base) != 2:
+        return [3, 8]
+
+    low = max(1, int(base[0]))
+    high = max(low, int(base[1]))
+    phase = behavior.get("phase", "midday")
+
+    if phase == "morning":
+        high += 1
+    elif phase == "evening":
+        low = max(2, low - 1)
+        high = max(low + 1, high - 1)
+
+    if int(behavior.get("recent_reply_count", 0)) >= 2:
+        high = max(low + 1, high - 1)
+
+    if int(behavior.get("recent_follow_count", 0)) >= 2:
+        low = min(low + 1, high)
+
+    return [low, high]
+
+
+def choose_action(action_mix: dict[str, float], state: dict | None = None, behavior: dict[str, Any] | None = None) -> str:
     defaults = {"reply": 0.6, "like": 0.2, "follow": 0.12, "browse": 0.08}
     mix = {**defaults, **(action_mix or {})}
+
+    if state:
+        recent = state.get("reply_history", [])[-12:]
+        recent_counts = Counter(str(item.get("action", "")) for item in recent)
+        if recent_counts.get("reply", 0) >= 2:
+            mix["reply"] = max(0.08, float(mix.get("reply", 0.0)) - 0.12)
+            mix["browse"] = float(mix.get("browse", 0.0)) + 0.08
+        if recent_counts.get("follow", 0) >= 2:
+            mix["follow"] = max(0.03, float(mix.get("follow", 0.0)) - 0.06)
+            mix["like"] = float(mix.get("like", 0.0)) + 0.03
+
+    if behavior:
+        phase = behavior.get("phase")
+        if phase in {"morning", "midday"}:
+            mix["browse"] = float(mix.get("browse", 0.0)) + 0.05
+            mix["follow"] = float(mix.get("follow", 0.0)) + 0.02
+        elif phase == "evening":
+            mix["reply"] = float(mix.get("reply", 0.0)) + 0.05
+            mix["browse"] = max(0.03, float(mix.get("browse", 0.0)) - 0.03)
+
     total = sum(max(0.0, float(v)) for v in mix.values())
     if total <= 0:
         return "reply"
@@ -685,6 +802,22 @@ async def scrape_posts_for_keyword(page: Page, keyword: str, max_posts: int, scr
     return candidates
 
 
+async def browse_post_naturally(page: Page, post: CandidatePost, behavior: dict[str, Any]) -> None:
+    await page.goto(post.post_url, wait_until="domcontentloaded", timeout=45000)
+    await page.wait_for_timeout(random.randint(1200, 2400))
+    for _ in range(random.randint(1, 2)):
+        await page.evaluate("window.scrollBy(0, Math.floor(window.innerHeight * 0.55))")
+        await page.wait_for_timeout(random.randint(800, 1700))
+    if post.author_url and random.random() < 0.6:
+        await page.goto(post.author_url, wait_until="domcontentloaded", timeout=45000)
+        await page.wait_for_timeout(random.randint(1000, 2200))
+        if random.random() < 0.5:
+            await page.evaluate("window.scrollBy(0, Math.floor(window.innerHeight * 0.35))")
+            await page.wait_for_timeout(random.randint(700, 1400))
+    if behavior.get("phase") in {"morning", "afternoon"} and random.random() < 0.3:
+        await page.mouse.move(random.randint(140, 920), random.randint(220, 760), steps=random.randint(6, 14))
+
+
 async def post_reply(page: Page, post_url: str, reply_text: str) -> tuple[bool, str]:
     try:
         await page.goto(post_url, wait_until="domcontentloaded", timeout=45000)
@@ -830,6 +963,16 @@ async def run_cycle(cfg: dict, profile: dict, state: dict, ollama: OllamaClient 
         logging.info("Outside active US windows, skipping cycle")
         return {"checked_posts": 0, "relevant_posts": 0, "replies_sent": 0, "likes_sent": 0, "follows_sent": 0, "browse_only": 0, "keywords": []}
 
+    behavior = get_behavior_context(cfg, state)
+    logging.info(
+        "Behavior context: tz=%s phase=%s recent_reply=%s recent_follow=%s recent_like=%s",
+        behavior.get("timezone"),
+        behavior.get("phase"),
+        behavior.get("recent_reply_count", 0),
+        behavior.get("recent_follow_count", 0),
+        behavior.get("recent_like_count", 0),
+    )
+
     seen = set(state.get("seen_posts", []))
     replied = set(state.get("replied_posts", []))
     liked = set(state.get("liked_posts", []))
@@ -882,7 +1025,7 @@ async def run_cycle(cfg: dict, profile: dict, state: dict, ollama: OllamaClient 
                 page,
                 keyword,
                 max_posts=search_per_kw,
-                scroll_depth_range=cfg.get("scroll_depth_range", [3, 8]),
+                scroll_depth_range=get_scroll_depth_range(cfg, behavior),
             )
             logging.info("Found posts: %s", len(posts))
 
@@ -922,7 +1065,7 @@ async def run_cycle(cfg: dict, profile: dict, state: dict, ollama: OllamaClient 
                     logging.info("Hourly cap reached, pausing action attempts")
                     break
 
-                action = choose_action(action_mix)
+                action = choose_action(action_mix, state=state, behavior=behavior)
                 ok = False
                 reason = ""
                 reply_text = ""
@@ -937,8 +1080,7 @@ async def run_cycle(cfg: dict, profile: dict, state: dict, ollama: OllamaClient 
                     stats["browse_only"] += 1
                     reason = "browse_only"
                     ok = True
-                    await page.goto(post.post_url, wait_until="domcontentloaded", timeout=45000)
-                    await page.wait_for_timeout(random.randint(2200, 5200))
+                    await browse_post_naturally(page, post, behavior)
 
                 elif action == "like":
                     if post_id in liked:
@@ -966,8 +1108,9 @@ async def run_cycle(cfg: dict, profile: dict, state: dict, ollama: OllamaClient 
                         increase_hour_counter(state)
 
                 elif action == "reply":
+                    reply_context = build_reply_context(cfg, state, behavior, post)
                     if ollama:
-                        reply_text = ollama.compose_reply(persona, post.text, post.author_handle or "")
+                        reply_text = ollama.compose_reply(persona, post.text, post.author_handle or "", context_hint=reply_context)
                     else:
                         reply_text = "Interesting ask. I build IT/AI/app/web/telegram solutions and can help quickly. Want to continue in DM?"
 
@@ -992,8 +1135,9 @@ async def run_cycle(cfg: dict, profile: dict, state: dict, ollama: OllamaClient 
 
                 else:
                     # Draft action: keep decision and proposed reply in history without posting.
+                    reply_context = build_reply_context(cfg, state, behavior, post)
                     if ollama:
-                        reply_text = ollama.compose_reply(persona, post.text, post.author_handle or "")
+                        reply_text = ollama.compose_reply(persona, post.text, post.author_handle or "", context_hint=reply_context)
                     if not reply_text:
                         reply_text = "Draft: concise value-first response needed"
 
