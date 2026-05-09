@@ -17,6 +17,27 @@ echo 'export GITHUB_TOKEN="твой_токен"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
+Если хочешь, чтобы настройки подхватывались автоматически, можешь один раз создать локальный файл окружения и подключить его в shell.
+
+```bash
+cat > ~/.env_threads_x <<'EOF'
+export GITHUB_TOKEN="твой_токен"
+export DUAL_LAYOUT=even-horizontal
+export DUAL_TMUX_WIDTH=240
+export DUAL_TMUX_HEIGHT=60
+export THREADS_WIN_X=0
+export THREADS_WIN_Y=0
+export THREADS_WIN_WIDTH=960
+export THREADS_WIN_HEIGHT=1080
+export X_BROWSER_X=970
+export X_BROWSER_Y=0
+export X_BROWSER_WIDTH=950
+export X_BROWSER_HEIGHT=1080
+EOF
+echo 'source ~/.env_threads_x' >> ~/.zshrc
+source ~/.zshrc
+```
+
 ## 3. Инициализация окружения
 
 ```bash
@@ -49,6 +70,28 @@ export X_BROWSER_WIDTH=960
 export THREADS_WIN_HEIGHT=1080
 export X_BROWSER_HEIGHT=1080
 ```
+
+### Полный набор настроек
+
+Если хочешь полный контроль, используй эти параметры из `.env.example`:
+
+- `GITHUB_TOKEN` — токен GitHub Models для Threads
+- `OPENROUTER_API_KEY` — fallback для X или запасной LLM
+- `DUAL_LAYOUT` — `even-horizontal`, `even-vertical`, `main-horizontal`, `main-vertical`, `tiled`
+- `DUAL_TMUX_WIDTH` / `DUAL_TMUX_HEIGHT` — размер tmux-сессии
+- `THREADS_WIN_X` / `THREADS_WIN_Y` / `THREADS_WIN_WIDTH` / `THREADS_WIN_HEIGHT` — окно Threads
+- `X_BROWSER_X` / `X_BROWSER_Y` / `X_BROWSER_WIDTH` / `X_BROWSER_HEIGHT` — окно X
+- `OLLAMA_HOST` / `OLLAMA_MODEL` — если нужен локальный LLM fallback
+- `DEBUG` / `VERBOSE` — расширенные логи
+
+### Что влияет на стиль сообщений
+
+- `threads_autopilot/config.json` — ключевые слова, лимиты, пороги уверенности, persona
+- `threads_autopilot/persona.md` — твой стиль, примеры, тональность, словарь
+- `llm_provider` — сейчас `github_models`, можно переключить на `openrouter` для GPT-4o или Claude Opus, если есть ключ
+- `auto_send_min_score` / `draft_min_score` — насколько смело агент отправляет ответ сам
+
+Если хочешь более human-стиль, сначала усиливай `persona.md`, а уже потом меняй модель.
 
 ## 7. Проверка
 
@@ -92,3 +135,25 @@ export X_BROWSER_HEIGHT=1080
 
 **Всё готово для запуска!**
 Если хочешь — можешь сразу посмотреть autopilot.log после первого запуска: там будут все ответы, которые пишет агент.
+
+## Самая короткая команда для Linux
+
+Если токен уже задан и `./go.sh init` уже был выполнен, запуск сводится к одной команде:
+
+```bash
+cd telegramleadgenerator && ./go.sh start
+```
+
+Если хочешь подхватить свой локальный файл окружения перед стартом:
+
+```bash
+cd telegramleadgenerator && source ~/.env_threads_x && ./go.sh start
+```
+
+Если поднимаешь всё с нуля на чистом Linux, полный порядок такой:
+
+```bash
+cd telegramleadgenerator && ./go.sh doctor && ./go.sh init && ./go.sh login && ./go.sh start
+```
+
+`login` открывает браузер для ручной авторизации, поэтому его один раз надо пройти глазами. После этого дальнейший запуск — это уже только `./go.sh start`.
