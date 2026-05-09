@@ -1,8 +1,12 @@
-# 🚀 Dual Social Media Autopilot: Threads + X
+# Telegram Lead Generator
 
-A production-ready dual social media lead generation and thought leadership system. Automatically discovers relevant leads on Threads and generates authority content on X (Twitter).
+Public Telegram lead-generation repository.
 
-**Status:** ✅ Production Ready | **Built:** 2026 | **Last Updated:** 2026-05-09
+This repository keeps the Telegram-focused stack here. The newer companion social-agent stack has been split out into a separate local repo at `/Users/kirill/xautopilot` and should be treated as private/closed.
+
+If you're only working on Telegram, ignore the companion repo and use the Telegram code in this repository.
+
+**Status:** Telegram-focused public repo | **Built:** 2026 | **Last Updated:** 2026-05-09
 
 ---
 
